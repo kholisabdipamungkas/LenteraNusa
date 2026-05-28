@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Detail Produk | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Back Link */
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    
+    /* Product Detail Layout */
+    .product-detail { background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); overflow: hidden; }
+    .product-header { display: flex; gap: 2rem; flex-wrap: wrap; padding: 2rem; }
+    .product-image-section { flex: 1; min-width: 200px; text-align: center; background: var(--gray-100); border-radius: var(--border-radius-card); padding: 2rem; }
+    .product-icon { font-size: 5rem; }
+    .product-info-section { flex: 2; min-width: 250px; }
+    .product-category { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; background: #EEF2FF; color: var(--primary); margin-bottom: 1rem; }
+    .product-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .product-price { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 1rem 0; }
+    .product-stock { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 40px; font-size: 0.875rem; margin-bottom: 1rem; }
+    .stock-available { background: #ECFDF5; color: #10B981; }
+    .stock-low { background: #FEF3C7; color: #F59E0B; }
+    .stock-soldout { background: #FEE2E2; color: #EF4444; }
+    .product-desc { color: var(--gray-600); line-height: 1.6; margin-bottom: 1rem; }
+    .btn-add-to-cart { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 0.75rem 2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-add-to-cart:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-add-to-cart:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    /* Divider */
+    .divider { margin: 0 2rem; border: none; border-top: 1px solid var(--gray-200); }
+    
+    /* Reviews Section */
+    .reviews-section { padding: 2rem; }
+    .reviews-title { font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .review-item { background: var(--gray-100); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; transition: 0.2s; }
+    .review-item:hover { background: #E8EDF5; }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .review-name { font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .review-name i { color: var(--primary); }
+    .review-stars { color: #F59E0B; font-size: 0.8rem; }
+    .review-text { color: var(--gray-600); margin-bottom: 0.25rem; line-height: 1.5; }
+    .review-date { font-size: 0.7rem; color: var(--gray-600); }
+    
+    /* Add Review Form */
+    .add-review { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200); }
+    .add-review h4 { margin-bottom: 0.5rem; }
+    .rating-select { padding: 0.5rem; border-radius: 40px; border: 1px solid var(--gray-200); margin-bottom: 0.5rem; }
+    .review-input { width: 100%; padding: 0.75rem; border: 1px solid var(--gray-200); border-radius: 16px; resize: vertical; font-family: inherit; margin-bottom: 1rem; transition: 0.2s; }
+    .review-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,33,182,0.1); }
+    .btn-submit-review { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .btn-submit-review:hover { transform: scale(1.02); }
+    
+    /* Empty State */
+    .empty-review { text-align: center; padding: 2rem; color: var(--gray-600); background: var(--gray-100); border-radius: 16px; }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .product-header { flex-direction: column; padding: 1.5rem; }
+      .reviews-section { padding: 1.5rem; }
+      .divider { margin: 0 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <a href="toko-hadiah.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Toko</a>
+    <div id="productDetail"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = parseInt(urlParams.get('id'));
+  let products = JSON.parse(localStorage.getItem('products')) || [];
+  const product = products.find(p => p.id === productId);
+  
+  // Ambil review dari localStorage
+  let productReviews = JSON.parse(localStorage.getItem('productReviews')) || {};
+  let reviews = productReviews[productId] || [
+    { name: "Siti Nurhaliza", rating: 5, text: "Buku yang sangat bagus! Anak saya sangat suka membaca cerita-ceritanya.", date: "10 Desember 2024" },
+    { name: "Budi Santoso", rating: 4, text: "Kualitas bagus, recommended untuk anak-anak!", date: "8 Desember 2024" },
+    { name: "Ahmad Fauzi", rating: 5, text: "Pengiriman cepat, produk sesuai deskripsi. Terima kasih LenteraNusa!", date: "5 Desember 2024" }
+  ];
+  
+  function getStockClass(stock) {
+    if (stock === 0) return 'stock-soldout';
+    if (stock < 5) return 'stock-low';
+    return 'stock-available';
+  }
+  
+  function getStockText(stock) {
+    if (stock === 0) return 'Stok Habis';
+    if (stock < 5) return `Stok: ${stock} (tersisa sedikit)`;
+    return `Stok: ${stock} tersedia`;
+  }
+  
+  function renderStarRating(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+      stars += i <= rating ? '★' : '☆';
+    }
+    return stars;
+  }
+  
+  function renderReviews() {
+    const container = document.getElementById('reviewsList');
+    if (!container) return;
+    
+    if (reviews.length === 0) {
+      container.innerHTML = '<div class="empty-review"><i class="fas fa-star" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>Belum ada ulasan. Jadilah yang pertama!</div>';
+      return;
+    }
+    
+    let reviewsHtml = '';
+    reviews.forEach(review => {
+      reviewsHtml += `
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-name">
+              <i class="fas fa-user-circle"></i> ${escapeHtml(review.name)}
+            </div>
+            <div class="review-stars">${renderStarRating(review.rating)}</div>
+          </div>
+          <div class="review-text">${escapeHtml(review.text)}</div>
+          <div class="review-date"><i class="far fa-calendar-alt"></i> ${review.date}</div>
+        </div>
+      `;
+    });
+    container.innerHTML = reviewsHtml;
+  }
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  function showNotification(message, type = 'success') {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#10B981' : '#EF4444'};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      z-index: 1001;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    notif.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      notif.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notif.remove(), 300);
+    }, 3000);
+  }
+  
+  // Tambahkan style animasi
+  const styleAnim = document.createElement('style');
+  styleAnim.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(styleAnim);
+  
+  if (!product) {
+    document.getElementById('productDetail').innerHTML = `
+      <div class="product-detail" style="text-align: center; padding: 3rem;">
+        <i class="fas fa-box-open" style="font-size: 3rem; color: var(--gray-600);"></i>
+        <h2 style="margin: 1rem 0;">Produk tidak ditemukan</h2>
+        <a href="toko-hadiah.html" class="btn-add-to-cart" style="display: inline-block;">Kembali ke Toko</a>
+      </div>
+    `;
+  } else {
+    const stockClass = getStockClass(product.stock);
+    const isOutOfStock = product.stock === 0;
+    const currentUserPoints = currentUser.points || 0;
+    const canBuy = currentUserPoints >= product.price && !isOutOfStock;
+    
+    document.getElementById('productDetail').innerHTML = `
+      <div class="product-detail">
+        <div class="product-header">
+          <div class="product-image-section">
+            <div class="product-icon">${product.image || '🎁'}</div>
+          </div>
+          <div class="product-info-section">
+            <div class="product-category">${product.category || 'Produk'}</div>
+            <h1 class="product-title">${escapeHtml(product.name)}</h1>
+            <p class="product-desc">${escapeHtml(product.description || 'Produk menarik untuk menambah semangat belajarmu!')}</p>
+            <div class="product-price"><i class="fas fa-star"></i> ${product.price} poin</div>
+            <div class="product-stock ${stockClass}">
+              <i class="fas fa-box"></i> ${getStockText(product.stock)}
+            </div>
+            <button class="btn-add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
+              <i class="fas ${isOutOfStock ? 'fa-ban' : 'fa-cart-plus'}"></i>
+              ${isOutOfStock ? 'Stok Habis' : 'Tambah ke Keranjang'}
+            </button>
+            ${!canBuy && !isOutOfStock ? `<p style="margin-top: 0.5rem; font-size: 0.7rem; color: #EF4444;">⚠️ Poin tidak cukup! Butuh ${product.price - currentUserPoints} poin lagi.</p>` : ''}
+          </div>
+        </div>
+        
+        <hr class="divider">
+        
+        <div class="reviews-section">
+          <div class="reviews-title">
+            <i class="fas fa-star" style="color: #F59E0B;"></i> Ulasan Pembeli (${reviews.length})
+          </div>
+          <div id="reviewsList"></div>
+          
+          <div class="add-review">
+            <h4><i class="fas fa-pen"></i> Beri Ulasan</h4>
+            <div style="margin-bottom: 0.5rem;">
+              <span>Rating: </span>
+              <select id="ratingSelect" class="rating-select">
+                <option value="5">★★★★★ (Sangat Baik)</option>
+                <option value="4">★★★★☆ (Baik)</option>
+                <option value="3">★★★☆☆ (Cukup)</option>
+                <option value="2">★★☆☆☆ (Kurang)</option>
+                <option value="1">★☆☆☆☆ (Sangat Kurang)</option>
+              </select>
+            </div>
+            <textarea id="reviewText" class="review-input" rows="3" placeholder="Tulis ulasanmu tentang produk ini..."></textarea>
+            <button id="submitReview" class="btn-submit-review"><i class="fas fa-paper-plane"></i> Kirim Ulasan</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    renderReviews();
+    
+    // Tombol tambah ke keranjang
+    document.querySelector('.btn-add-to-cart')?.addEventListener('click', () => {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let userPointsNow = currentUser.points || 0;
+      
+      if (userPointsNow >= product.price) {
+        cart.push({ ...product, addedAt: new Date().toISOString() });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        showNotification(`✅ ${product.name} ditambahkan ke keranjang!`, 'success');
+        
+        // Update icon keranjang di halaman lain (opsional)
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        cartCountElements.forEach(el => {
+          if (el) el.innerText = cart.length;
+        });
+      } else {
+        showNotification(`❌ Poin tidak cukup! Butuh ${product.price - userPointsNow} poin lagi.`, 'error');
+      }
+    });
+    
+    // Submit review
+    document.getElementById('submitReview')?.addEventListener('click', () => {
+      const rating = parseInt(document.getElementById('ratingSelect').value);
+      const text = document.getElementById('reviewText').value.trim();
+      
+      if (text === '') {
+        showNotification('Silakan tulis ulasan terlebih dahulu!', 'error');
+        return;
+      }
+      
+      const newReview = {
+        name: currentUser.name,
+        rating: rating,
+        text: text,
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+      };
+      
+      reviews.unshift(newReview);
+      productReviews[productId] = reviews;
+      localStorage.setItem('productReviews', JSON.stringify(productReviews));
+      
+      renderReviews();
+      document.getElementById('reviewText').value = '';
+      document.getElementById('ratingSelect').value = '5';
+      
+      // Update jumlah ulasan di judul
+      const reviewsTitle = document.querySelector('.reviews-title');
+      if (reviewsTitle) {
+        reviewsTitle.innerHTML = `<i class="fas fa-star" style="color: #F59E0B;"></i> Ulasan Pembeli (${reviews.length})`;
+      }
+      
+      showNotification('✅ Terima kasih atas ulasannya!', 'success');
+    });
+  }
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li class="active"><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

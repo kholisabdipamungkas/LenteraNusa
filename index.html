@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>LenteraNusa | Belajar Calistung Jadi Lebih Seru</title>
+  <!-- Google Fonts & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FEF9F0;
+      color: #1A1A2E;
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --primary: #8B5CF6;
+      --primary-light: #A78BFA;
+      --primary-dark: #7C3AED;
+      --secondary: #6366F1;
+      --secondary-dark: #4F46E5;
+      --navy: #0F172A;
+      --navy-light: #1E293B;
+      --bg-card: #FFFFFF;
+      --text-body: #334155;
+      --text-muted: #64748B;
+      --border-radius-card: 32px;
+      --border-radius-btn: 60px;
+      --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 30px 45px -15px rgba(99, 102, 241, 0.15);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo i {
+      background: none;
+      color: var(--primary);
+      font-size: 32px;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--navy);
+      transition: 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-outline {
+      padding: 10px 28px;
+      border-radius: var(--border-radius-btn);
+      border: 2px solid var(--primary);
+      background: transparent;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+    }
+
+    .btn-primary {
+      padding: 10px 28px;
+      border-radius: var(--border-radius-btn);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* mobile menu toggle */
+    .menu-toggle {
+      display: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--navy);
+    }
+
+    /* ========== HERO SECTION ========== */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 60px;
+      padding: 60px 0 80px;
+      flex-wrap: wrap;
+    }
+
+    .hero-content {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .hero-content h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 54px;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--navy), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 24px;
+    }
+
+    .hero-content p {
+      font-size: 18px;
+      color: var(--text-body);
+      margin-bottom: 32px;
+      max-width: 500px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 48px;
+    }
+
+    .stat-item h3 {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .stat-item p {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .hero-image {
+      flex: 1;
+      text-align: center;
+      background: linear-gradient(145deg, rgba(139,92,246,0.08), rgba(99,102,241,0.05));
+      border-radius: 60px;
+      padding: 40px;
+    }
+
+    .hero-image i {
+      font-size: 220px;
+      color: var(--primary);
+      opacity: 0.6;
+    }
+
+    /* ========== FEATURES ========== */
+    .section-title {
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin: 64px 0 48px;
+      font-family: 'Poppins', sans-serif;
+      color: var(--navy);
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+      font-size: 18px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-bottom: 64px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border-radius: var(--border-radius-card);
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+      border: 1px solid rgba(139, 92, 246, 0.08);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .feature-icon {
+      font-size: 56px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin: 48px 0;
+    }
+
+    .testimonial-card {
+      background: white;
+      border-radius: var(--border-radius-card);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+      border: 1px solid rgba(139, 92, 246, 0.08);
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .testimonial-card .stars {
+      color: #fbbf24;
+      margin: 16px 0 8px;
+      font-size: 18px;
+    }
+
+    .testimonial-card i.fa-quote-left {
+      color: var(--primary);
+      opacity: 0.3;
+      font-size: 32px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .testimonial-avatar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .testimonial-avatar .avatar-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .testimonial-avatar h4 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .testimonial-avatar p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ========== CTA ========== */
+    .cta-section {
+      background: linear-gradient(135deg, var(--navy), #1E293B);
+      border-radius: var(--border-radius-card);
+      padding: 64px 48px;
+      text-align: center;
+      margin: 80px 0;
+      color: white;
+    }
+
+    .cta-section h2 {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+
+    .cta-section .btn-primary {
+      background: white;
+      color: var(--navy);
+      margin-top: 24px;
+    }
+
+    .cta-section .btn-primary:hover {
+      background: #f1f5f9;
+      transform: translateY(-3px);
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 56px 0 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 40px;
+    }
+
+    footer a {
+      display: block;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin: 8px 0;
+      transition: 0.2s;
+    }
+
+    footer a:hover {
+      color: var(--primary);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 992px) {
+      .hero-content h1 { font-size: 42px; }
+      .hero-image i { font-size: 160px; }
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 20px; }
+      .navbar { flex-wrap: wrap; }
+      .nav-menu {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 20px 0;
+      }
+      .nav-menu.active {
+        display: flex;
+      }
+      .nav-links {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .nav-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      .menu-toggle {
+        display: block;
+      }
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 0;
+      }
+      .hero-content p { margin-left: auto; margin-right: auto; }
+      .hero-stats { justify-content: center; }
+      .section-title { font-size: 28px; margin: 40px 0 28px; }
+      .cta-section { padding: 40px 24px; }
+      .cta-section h2 { font-size: 28px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-stats { gap: 24px; flex-wrap: wrap; justify-content: center; }
+      .stat-item h3 { font-size: 24px; }
+      .feature-card { padding: 28px 20px; }
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <nav class="navbar">
+    <div class="logo"><i class="fas fa-feather-alt"></i> LenteraNusa</div>
+    <div class="menu-toggle" id="mobileMenu"><i class="fas fa-bars"></i></div>
+    <div class="nav-menu" id="navMenu">
+      <div class="nav-links">
+        <a href="#">Beranda</a>
+        <a href="#features">Fitur</a>
+        <a href="#testimonials">Testimoni</a>
+        <a href="#">Tentang</a>
+      </div>
+      <div class="nav-buttons">
+        <a href="login.html" class="btn-outline"><i class="fas fa-sign-in-alt"></i> Masuk</a>
+        <a href="register.html" class="btn-primary"><i class="fas fa-user-plus"></i> Daftar Gratis</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Belajar Calistung <br>Jadi Lebih Seru!</h1>
+      <p>Platform pembelajaran interaktif untuk meningkatkan kemampuan membaca, menulis, dan berhitung. Belajar sambil bermain, kumpulkan poin, dan raih badge keren!</p>
+      <a href="register.html" class="btn-primary" style="padding: 14px 36px;"><i class="fas fa-rocket"></i> Mulai Belajar Gratis</a>
+      <div class="hero-stats">
+        <div class="stat-item"><h3>50K+</h3><p>Siswa Aktif</p></div>
+        <div class="stat-item"><h3>1000+</h3><p>Modul Belajar</p></div>
+        <div class="stat-item"><h3>95%</h3><p>Kepuasan</p></div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <i class="fas fa-graduation-cap"></i>
+    </div>
+  </section>
+
+  <h2 class="section-title" id="features">Kenapa Harus LenteraNusa?</h2>
+  <p class="section-subtitle">Platform belajar terlengkap dengan berbagai fitur seru untuk mendukung belajarmu</p>
+  
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+      <h3>Modul Interaktif</h3>
+      <p>Belajar membaca, menulis, dan berhitung dengan cara menyenangkan dan mudah dipahami.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-award"></i></div>
+      <h3>Sistem Poin & Badge</h3>
+      <p>Kumpulkan poin dan badge keren setiap kali menyelesaikan pembelajaran.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-certificate"></i></div>
+      <h3>Sertifikat Digital</h3>
+      <p>Dapatkan sertifikat untuk setiap pencapaian yang kamu raih.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+      <h3>Leaderboard</h3>
+      <p>Bandingkan progresmu dengan siswa lain se-Indonesia.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+      <h3>Disesuaikan Jenjang</h3>
+      <p>Materi khusus untuk SD, SMP, dan SMA sesuai kurikulum.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-gamepad"></i></div>
+      <h3>Belajar Seperti Game</h3>
+      <p>Kuis interaktif yang bikin belajar terasa seperti bermain game.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-users"></i></div>
+      <h3>Forum Diskusi</h3>
+      <p>Diskusikan materi belajar dengan teman-teman satu Indonesia.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+      <h3>Akses Seluler</h3>
+      <p>Belajar kapan saja dan di mana saja via smartphone.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title" id="testimonials">Apa Kata Mereka?</h2>
+  <p class="section-subtitle">Ribuan siswa telah merasakan manfaat belajar di LenteraNusa</p>
+  
+  <div class="testimonial-grid">
+    <div class="testimonial-card">
+      <i class="fas fa-quote-left"></i>
+      <p>"Belajar di LenteraNusa seru banget! Aku jadi lebih semangat belajar matematika. Kuisnya menantang dan badge-nya keren!"</p>
+      <div class="stars">★★★★★</div>
+      <div class="testimonial-avatar">
+        <div class="avatar-icon"><i class="fas fa-user-graduate"></i></div>
+        <div>
+          <h4>Andi Pratama</h4>
+          <p>Siswa SD Kelas 5</p>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <i class="fas fa-quote-left"></i>
+      <p>"Badge-nya keren banget! Aku sudah dapat 15 badge dalam sebulan. Termotivasi untuk terus belajar dan mengumpulkan poin."</p>
+      <div class="stars">★★★★★</div>
+      <div class="testimonial-avatar">
+        <div class="avatar-icon"><i class="fas fa-user-graduate"></i></div>
+        <div>
+          <h4>Siti Nurhaliza</h4>
+          <p>Siswi SMP Kelas 8</p>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <i class="fas fa-quote-left"></i>
+      <p>"Modulnya lengkap dan mudah dipahami. Sangat membantu persiapan ujian akhir semester. Nilai saya meningkat drastis!"</p>
+      <div class="stars">★★★★★</div>
+      <div class="testimonial-avatar">
+        <div class="avatar-icon"><i class="fas fa-user-graduate"></i></div>
+        <div>
+          <h4>Budi Santoso</h4>
+          <p>Siswa SMA Kelas 11</p>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <i class="fas fa-quote-left"></i>
+      <p>"Sebagai orang tua, saya senang melihat anak saya jadi lebih rajin belajar. LenteraNusa membuat anak saya antusias belajar calistung!"</p>
+      <div class="stars">★★★★★</div>
+      <div class="testimonial-avatar">
+        <div class="avatar-icon"><i class="fas fa-user-tie"></i></div>
+        <div>
+          <h4>Ibu Dewi</h4>
+          <p>Orang Tua Siswa</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2>Siap Mulai Petualangan Belajarmu?</h2>
+    <p style="font-size: 18px; margin-top: 12px;">Bergabung dengan ribuan siswa lainnya dan tingkatkan kemampuan calistungmu sekarang!</p>
+    <a href="register.html" class="btn-primary" style="background: white; color: #0F172A;"><i class="fas fa-user-check"></i> Daftar Sekarang - Gratis!</a>
+  </div>
+
+  <footer>
+    <div>
+      <div class="logo" style="margin-bottom: 12px;">LenteraNusa</div>
+      <p style="color: #64748B;">Platform pembelajaran terbaik untuk siswa Indonesia</p>
+    </div>
+    <div>
+      <h4>Produk</h4>
+      <a href="#">Modul Belajar</a>
+      <a href="#">Kuis Interaktif</a>
+      <a href="#">Toko Hadiah</a>
+    </div>
+    <div>
+      <h4>Perusahaan</h4>
+      <a href="#">Tentang Kami</a>
+      <a href="#">Karir</a>
+      <a href="#">Blog</a>
+    </div>
+    <div>
+      <h4>Bantuan</h4>
+      <a href="#">FAQ</a>
+      <a href="#">Kontak</a>
+      <a href="#">Syarat & Ketentuan</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // Mobile menu toggle
+  const toggleBtn = document.getElementById('mobileMenu');
+  const navMenu = document.getElementById('navMenu');
+  toggleBtn.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+  });
+
+  // Smooth scroll untuk anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        // Tutup mobile menu jika terbuka
+        navMenu.classList.remove('active');
+      }
+    });
+  });
+
+  // Inisialisasi data dummy jika belum ada
+  if (!localStorage.getItem('users')) {
+    const defaultUsers = [
+      { id: 1, name: "Andi Pratama", email: "siswa@example.com", password: "123", role: "siswa", points: 1250, badges: [], jenjang: "SD", school: "SD Negeri 1 Jakarta", avatar: "" },
+      { id: 2, name: "Admin Lentera", email: "admin@example.com", password: "123", role: "admin", points: 0, department: "Manajemen" }
+    ];
+    localStorage.setItem('users', JSON.stringify(defaultUsers));
+    
+    const modules = [
+      { id: 1, title: "Membaca Pemahaman: Cerita Pendek", category: "Membaca", duration: "30", points: 100, level: "SD", description: "Belajar memahami isi cerita pendek dengan mudah." },
+      { id: 2, title: "Menulis Paragraf yang Baik", category: "Menulis", duration: "25", points: 80, level: "SD", description: "Teknik menulis paragraf yang runtut dan jelas." },
+      { id: 3, title: "Operasi Hitung Campuran", category: "Berhitung", duration: "35", points: 120, level: "SD", description: "Menguasai operasi hitung campuran dengan cepat." }
+    ];
+    localStorage.setItem('modules', JSON.stringify(modules));
+    
+    const quizzes = [
+      { id: 1, title: "Kuis Membaca Pemahaman", category: "Membaca", totalSoal: 10, duration: "15", points: 100, level: "SD", description: "Uji pemahaman membacamu dengan soal-soal menarik." },
+      { id: 2, title: "Kuis Operasi Hitung Dasar", category: "Berhitung", totalSoal: 10, duration: "20", points: 100, level: "SD", description: "Asah kemampuan berhitungmu di sini!" }
+    ];
+    localStorage.setItem('quizzes', JSON.stringify(quizzes));
+  }
+</script>
+</body>
+</html>

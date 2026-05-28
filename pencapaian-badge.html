@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Pencapaian | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0; }
+    .tab { padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 600; border-radius: 40px 40px 0 0; transition: 0.2s; color: var(--gray-600); text-decoration: none; display: inline-block; }
+    .tab.active { color: var(--primary); background: #EEF2FF; }
+    .tab:not(.active):hover { color: var(--primary); background: var(--gray-100); }
+    
+    /* Stats Summary */
+    .stats-summary { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--border-radius-card); padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; color: white; }
+    .stats-info .label { font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.25rem; }
+    .stats-info .total { font-size: 3rem; font-weight: 800; line-height: 1; }
+    .stats-info .sub { font-size: 0.75rem; opacity: 0.8; margin-top: 0.5rem; }
+    .stats-icon i { font-size: 4rem; opacity: 0.8; }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: var(--border-radius-card); padding: 1rem; text-align: center; border: 1px solid var(--gray-200); }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .stat-card .label { font-size: 0.7rem; color: var(--gray-600); margin-top: 0.25rem; }
+    
+    /* Progress Bar */
+    .progress-wrapper { margin-bottom: 1.5rem; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.5rem; }
+    .progress-bar { background: var(--gray-200); border-radius: 20px; height: 8px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; height: 100%; border-radius: 20px; transition: width 0.3s; }
+    
+    /* Badge Grid */
+    .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .badge-card { background: white; border-radius: var(--border-radius-card); padding: 1.5rem; border: 1px solid var(--gray-200); transition: all 0.2s; text-align: center; }
+    .badge-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .badge-card.locked { opacity: 0.7; background: #F9FAFB; filter: grayscale(0.1); }
+    .badge-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .badge-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .badge-rarity { font-size: 0.7rem; padding: 0.25rem 0.75rem; border-radius: 20px; display: inline-block; margin: 0.5rem 0; }
+    .rarity-common { background: #E2E8F0; color: #475569; }
+    .rarity-rare { background: #DBEAFE; color: #1D4ED8; }
+    .rarity-epic { background: #F3E8FF; color: #7E22CE; }
+    .rarity-legendary { background: #FEF3C7; color: #B45309; }
+    .badge-desc { font-size: 0.75rem; color: var(--gray-600); margin: 0.5rem 0; }
+    .badge-status { font-size: 0.7rem; margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--gray-200); }
+    .badge-status.earned { color: #10B981; }
+    .badge-status.locked { color: #EF4444; }
+    
+    /* Filter */
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; justify-content: flex-end; flex-wrap: wrap; }
+    .filter-select { padding: 0.5rem 1rem; border-radius: 40px; border: 1px solid var(--gray-200); background: white; font-size: 0.875rem; cursor: pointer; }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .stats-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+      .stats-summary { flex-direction: column; text-align: center; gap: 1rem; }
+      .badge-grid { grid-template-columns: 1fr; }
+      .filter-bar { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>🏅 Pencapaian</h1>
+      <p>Lihat semua badge yang berhasil kamu kumpulkan</p>
+    </div>
+    
+    <div class="tabs">
+      <a href="pencapaian-badge.html" class="tab active">🏅 Badge</a>
+      <a href="pencapaian-sertifikat.html" class="tab">📜 Sertifikat</a>
+      <a href="pencapaian-poin.html" class="tab">⭐ Poin</a>
+    </div>
+    
+    <div id="badgeContent"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  let badges = JSON.parse(localStorage.getItem('badges')) || [];
+  if (badges.length === 0) {
+    badges = [
+      { id: 1, name: "Pemula Rajin", rarity: "COMMON", syarat: "Selesaikan 5 modul", icon: "📘" },
+      { id: 2, name: "Pembaca Handal", rarity: "RARE", syarat: "Selesaikan 10 modul membaca", icon: "📖" },
+      { id: 3, name: "Jago Berhitung", rarity: "EPIC", syarat: "Selesaikan 15 modul berhitung", icon: "🔢" },
+      { id: 4, name: "Juara Kuis", rarity: "EPIC", syarat: "Raih skor 100% di 5 kuis", icon: "🏆" },
+      { id: 5, name: "Konsisten", rarity: "LEGENDARY", syarat: "Belajar 30 hari berturut-turut", icon: "🔥" },
+      { id: 6, name: "Master Calistung", rarity: "LEGENDARY", syarat: "Selesaikan semua modul", icon: "🎓" }
+    ];
+    localStorage.setItem('badges', JSON.stringify(badges));
+  }
+  
+  // Data user
+  let userBadges = currentUser.badges || [];
+  let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+  let userQuizCount = quizHistory.filter(h => h.userEmail === currentUser.email).length;
+  let userPerfectScore = quizHistory.filter(h => h.userEmail === currentUser.email && h.score === h.totalQuestions).length;
+  let moduleProgress = JSON.parse(localStorage.getItem('moduleProgress')) || {};
+  let completedModules = moduleProgress[currentUser.email] || 5;
+  
+  function isBadgeEarned(badge) {
+    if (userBadges.includes(badge.id)) return true;
+    if (badge.name === "Pemula Rajin" && completedModules >= 5) return true;
+    if (badge.name === "Pembaca Handal" && completedModules >= 10) return true;
+    if (badge.name === "Jago Berhitung" && completedModules >= 15) return true;
+    if (badge.name === "Juara Kuis" && userPerfectScore >= 5) return true;
+    if (badge.name === "Konsisten") return false;
+    if (badge.name === "Master Calistung" && completedModules >= 20) return false;
+    return false;
+  }
+  
+  function getRarityClass(rarity) {
+    return `rarity-${rarity.toLowerCase()}`;
+  }
+  
+  // Hitung statistik
+  let earnedBadges = badges.filter(b => isBadgeEarned(b)).length;
+  let totalBadges = badges.length;
+  let percentage = Math.round((earnedBadges / totalBadges) * 100);
+  
+  function renderBadges(filter = 'all') {
+    let filtered = badges;
+    if (filter === 'earned') {
+      filtered = badges.filter(b => isBadgeEarned(b));
+    } else if (filter === 'locked') {
+      filtered = badges.filter(b => !isBadgeEarned(b));
+    }
+    
+    let html = `
+      <div class="stats-summary">
+        <div class="stats-info">
+          <div class="label">Total Badge Diperoleh</div>
+          <div class="total">${earnedBadges}/${totalBadges}</div>
+          <div class="sub">✨ ${percentage}% dari semua badge</div>
+        </div>
+        <div class="stats-icon">
+          <i class="fas fa-medal"></i>
+        </div>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="value">${earnedBadges}</div>
+          <div class="label">Diperoleh</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">${totalBadges - earnedBadges}</div>
+          <div class="label">Belum Diperoleh</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">${userQuizCount}</div>
+          <div class="label">Total Kuis</div>
+        </div>
+      </div>
+      
+      <div class="progress-wrapper">
+        <div class="progress-label">
+          <span>Progress Pengumpulan Badge</span>
+          <span>${percentage}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${percentage}%;"></div>
+        </div>
+      </div>
+      
+      <div class="filter-bar">
+        <select id="badgeFilter" class="filter-select">
+          <option value="all" ${filter === 'all' ? 'selected' : ''}>Semua Badge</option>
+          <option value="earned" ${filter === 'earned' ? 'selected' : ''}>✅ Sudah Diperoleh</option>
+          <option value="locked" ${filter === 'locked' ? 'selected' : ''}>🔒 Belum Diperoleh</option>
+        </select>
+      </div>
+      
+      <div class="badge-grid">
+    `;
+    
+    if (filtered.length === 0) {
+      html += `
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-card);">
+          <i class="fas fa-medal" style="font-size: 3rem; color: var(--gray-600);"></i>
+          <h3 style="margin-top: 1rem;">Tidak ada badge</h3>
+          <p style="color: var(--gray-600);">Selesaikan lebih banyak modul dan kuis</p>
+        </div>
+      `;
+    } else {
+      filtered.forEach(b => {
+        const earned = isBadgeEarned(b);
+        html += `
+          <div class="badge-card ${earned ? '' : 'locked'}">
+            <div class="badge-icon">${b.icon}</div>
+            <div class="badge-name">${b.name}</div>
+            <div class="badge-rarity ${getRarityClass(b.rarity)}">${b.rarity}</div>
+            <div class="badge-desc">${b.syarat}</div>
+            <div class="badge-status ${earned ? 'earned' : 'locked'}">
+              ${earned ? '<i class="fas fa-check-circle"></i> Telah diperoleh' : '<i class="fas fa-lock"></i> Belum tercapai'}
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    html += `</div>`;
+    document.getElementById('badgeContent').innerHTML = html;
+    
+    // Event listener untuk filter
+    document.getElementById('badgeFilter')?.addEventListener('change', (e) => {
+      renderBadges(e.target.value);
+    });
+  }
+  
+  renderBadges('all');
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li class="active"><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

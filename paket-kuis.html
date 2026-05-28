@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kuis Interaktif | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95;
+      --primary-light:#7C3AED;
+      --secondary:#2563EB; 
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    
+    /* Layout */
+    .app { display: flex; min-height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar { 
+      width:280px; 
+      background:var(--card-bg); 
+      border-right:1px solid var(--gray-200); 
+      position:fixed; 
+      top:0; bottom:0; left:0; 
+      z-index:50; 
+      transition:transform 0.2s ease; 
+      overflow-y:auto; 
+      padding:1.5rem; 
+    }
+    
+    .sidebar-header { 
+      display:flex; 
+      align-items:center; 
+      gap:0.75rem; 
+      margin-bottom:2rem; 
+      padding-bottom:1rem; 
+      border-bottom:1px solid var(--gray-200); 
+    }
+    
+    .logo-icon { 
+      background:linear-gradient(135deg,var(--primary),var(--secondary)); 
+      width:36px; height:36px; 
+      border-radius:12px; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      color:white; 
+    }
+    
+    .logo-text { 
+      font-family:'Poppins'; 
+      font-weight:700; 
+      font-size:1.25rem;
+      background:linear-gradient(135deg,var(--primary),var(--secondary)); 
+      -webkit-background-clip:text; 
+      background-clip:text; 
+      color:transparent; 
+    }
+    
+    .sidebar-menu { 
+      list-style:none; 
+      margin-top:1rem;
+    }
+    
+    .sidebar-menu li { 
+      margin-bottom:0.25rem; 
+    }
+    
+    .sidebar-menu a { 
+      display:flex; 
+      align-items:center; 
+      gap:0.75rem; 
+      padding:0.75rem 1rem; 
+      border-radius:12px; 
+      color:var(--gray-600); 
+      font-weight:500; 
+      text-decoration:none; 
+      transition:all 0.2s;
+    }
+    
+    .sidebar-menu a:hover { 
+      background:var(--gray-100); 
+      color:var(--primary); 
+    }
+    
+    .sidebar-menu .active a { 
+      background:#EEF2FF; 
+      color:var(--primary); 
+    }
+    
+    .sidebar-menu i { 
+      width:1.25rem; 
+    }
+    
+    /* Main Content */
+    .main-content { 
+      flex:1; 
+      margin-left:280px; 
+      padding:2rem; 
+    }
+    
+    /* Header */
+    .page-header {
+      margin-bottom:2rem;
+    }
+    
+    .page-header h1 {
+      font-size:1.875rem;
+      font-weight:600;
+      color:var(--gray-800);
+    }
+    
+    .page-header p {
+      color:var(--gray-600);
+      margin-top:0.5rem;
+    }
+    
+    /* Stats Summary */
+    .stats-summary {
+      display:flex;
+      gap:1rem;
+      margin-bottom:2rem;
+      flex-wrap:wrap;
+    }
+    
+    .stat-summary-card {
+      background:linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius:var(--border-radius-card);
+      padding:1rem 1.5rem;
+      color:white;
+      display:flex;
+      align-items:center;
+      gap:1rem;
+    }
+    
+    .stat-summary-card i {
+      font-size:2rem;
+      opacity:0.8;
+    }
+    
+    .stat-summary-info h3 {
+      font-size:1.5rem;
+      font-weight:700;
+    }
+    
+    .stat-summary-info p {
+      font-size:0.75rem;
+      opacity:0.9;
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+      display:flex;
+      gap:1rem;
+      margin-bottom:2rem;
+      flex-wrap:wrap;
+    }
+    
+    .filter-select {
+      padding:0.75rem 1.5rem;
+      border-radius:40px;
+      border:1px solid var(--gray-200);
+      background:#FEF9F0;
+      font-size:0.875rem;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    
+    .filter-select:focus {
+      outline:none;
+      border-color:var(--primary);
+    }
+    
+    /* Quiz Grid */
+    .quiz-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+      gap:1.5rem;
+    }
+    
+    .quiz-card {
+      background:white;
+      border-radius:var(--border-radius-card);
+      padding:1.5rem;
+      border:1px solid var(--gray-200);
+      transition:all 0.2s;
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .quiz-card:hover {
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-md);
+    }
+    
+    /* Category Badge */
+    .category-badge {
+      display:inline-block;
+      padding:0.25rem 0.75rem;
+      border-radius:20px;
+      font-size:0.7rem;
+      font-weight:600;
+      margin-bottom:0.75rem;
+    }
+    
+    .category-membaca { background:#EFF6FF; color:#2563EB; }
+    .category-menulis { background:#FEF3C7; color:#D97706; }
+    .category-berhitung { background:#ECFDF5; color:#10B981; }
+    
+    .quiz-card h3 {
+      font-size:1.1rem;
+      margin-bottom:0.5rem;
+      color:var(--gray-800);
+    }
+    
+    .quiz-desc {
+      color:var(--gray-600);
+      font-size:0.875rem;
+      line-height:1.5;
+      margin-bottom:1rem;
+    }
+    
+    .quiz-meta {
+      display:flex;
+      gap:1rem;
+      margin:1rem 0;
+      padding:0.5rem 0;
+      border-top:1px solid var(--gray-200);
+      border-bottom:1px solid var(--gray-200);
+    }
+    
+    .quiz-meta span {
+      font-size:0.8rem;
+      color:var(--gray-600);
+    }
+    
+    .quiz-meta i {
+      margin-right:0.25rem;
+      color:var(--primary);
+    }
+    
+    .quiz-footer {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:1rem;
+    }
+    
+    .points-badge {
+      background:#EEF2FF;
+      padding:0.25rem 0.75rem;
+      border-radius:999px;
+      font-size:0.75rem;
+      font-weight:600;
+      color:var(--primary);
+    }
+    
+    .btn-quiz {
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:white;
+      padding:0.5rem 1rem;
+      border-radius:40px;
+      text-decoration:none;
+      font-size:0.875rem;
+      font-weight:500;
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      transition:all 0.2s;
+    }
+    
+    .btn-quiz:hover {
+      transform:scale(1.02);
+      box-shadow:0 4px 12px rgba(91,33,182,0.3);
+    }
+    
+    /* Best Score */
+    .best-score {
+      font-size:0.7rem;
+      color:#10B981;
+      margin-top:0.5rem;
+    }
+    
+    .empty-state {
+      text-align:center;
+      padding:3rem;
+      background:white;
+      border-radius:var(--border-radius-card);
+      border:1px solid var(--gray-200);
+    }
+    
+    .empty-state i {
+      font-size:3rem;
+      color:var(--gray-600);
+      margin-bottom:1rem;
+    }
+    
+    /* Mobile */
+    .hamburger {
+      display:none;
+      position:fixed;
+      top:1rem;
+      left:1rem;
+      z-index:60;
+      background:white;
+      border:none;
+      font-size:1.5rem;
+      padding:0.5rem;
+      border-radius:12px;
+      cursor:pointer;
+      box-shadow:var(--shadow-sm);
+    }
+    
+    @media (max-width:768px) {
+      .sidebar {
+        transform:translateX(-100%);
+        width:260px;
+      }
+      .sidebar.open {
+        transform:translateX(0);
+      }
+      .main-content {
+        margin-left:0;
+        padding:1.5rem;
+        padding-top:4rem;
+      }
+      .hamburger {
+        display:block;
+      }
+      .stats-summary {
+        flex-direction:column;
+      }
+      .filter-bar {
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>📝 Kuis Interaktif</h1>
+      <p>Uji pemahamanmu, raih poin tertinggi, dan menangkan badge!</p>
+    </div>
+    
+    <!-- Statistik Ringkasan -->
+    <div class="stats-summary" id="statsSummary"></div>
+    
+    <!-- Filter -->
+    <div class="filter-bar">
+      <select id="kategoriFilter" class="filter-select">
+        <option value="">📖 Semua Kategori</option>
+        <option value="Membaca">📖 Membaca</option>
+        <option value="Menulis">✏️ Menulis</option>
+        <option value="Berhitung">🔢 Berhitung</option>
+      </select>
+      <select id="levelFilter" class="filter-select">
+        <option value="">🎓 Semua Level</option>
+        <option value="SD">SD</option>
+        <option value="SMP">SMP</option>
+        <option value="SMA">SMA</option>
+      </select>
+    </div>
+    
+    <div id="quizList" class="quiz-grid"></div>
+  </main>
+</div>
+
+<script>
+  // Cek login
+  if(!JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(localStorage.getItem('currentUser')).role !== 'siswa') {
+    window.location='login.html';
+  }
+  
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  
+  // Data kuis default (fokus baca, tulis, hitung)
+  let quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+  
+  if (quizzes.length === 0) {
+    quizzes = [
+      { id: 1, title: "Kuis Membaca: Cerita Rakyat", category: "Membaca", totalSoal: 10, duration: "15", points: 100, level: "SD", description: "Uji pemahamanmu tentang cerita rakyat Nusantara." },
+      { id: 2, title: "Kuis Menulis: Huruf Tegak", category: "Menulis", totalSoal: 8, duration: "12", points: 80, level: "SD", description: "Latihan menulis huruf tegak bersambung dengan benar." },
+      { id: 3, title: "Kuis Berhitung: Penjumlahan", category: "Berhitung", totalSoal: 10, duration: "15", points: 100, level: "SD", description: "Uji kemampuan penjumlahan bilangan 1-100." },
+      { id: 4, title: "Kuis Membaca: Pemahaman Teks", category: "Membaca", totalSoal: 12, duration: "20", points: 120, level: "SMP", description: "Membaca dan memahami teks cerita narasi." },
+      { id: 5, title: "Kuis Menulis: Ringkasan", category: "Menulis", totalSoal: 10, duration: "15", points: 100, level: "SMP", description: "Latihan meringkas cerita dengan tepat." },
+      { id: 6, title: "Kuis Berhitung: Perkalian", category: "Berhitung", totalSoal: 10, duration: "15", points: 100, level: "SMP", description: "Uji kemampuan perkalian bilangan." },
+      { id: 7, title: "Kuis Membaca: Teks Argumentasi", category: "Membaca", totalSoal: 12, duration: "20", points: 120, level: "SMA", description: "Menganalisis teks argumentasi secara kritis." },
+      { id: 8, title: "Kuis Menulis: Esai", category: "Menulis", totalSoal: 10, duration: "18", points: 110, level: "SMA", description: "Latihan menulis esai dengan struktur yang baik." },
+      { id: 9, title: "Kuis Berhitung: Aljabar", category: "Berhitung", totalSoal: 10, duration: "20", points: 120, level: "SMA", description: "Memahami dasar-dasar aljabar dan persamaan." }
+    ];
+    localStorage.setItem('quizzes', JSON.stringify(quizzes));
+  }
+  
+  // Ambil riwayat kuis dari localStorage
+  let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+  
+  // Fungsi untuk mendapatkan skor terbaik user
+  function getBestScore(quizId) {
+    const history = quizHistory.filter(h => h.quizId === quizId && h.userEmail === currentUser.email);
+    if (history.length === 0) return null;
+    const best = Math.max(...history.map(h => h.score));
+    return best;
+  }
+  
+  // Hitung statistik
+  const totalQuizzes = quizzes.length;
+  const completedQuizzes = quizHistory.filter(h => h.userEmail === currentUser.email).length;
+  const totalPoints = quizHistory
+    .filter(h => h.userEmail === currentUser.email)
+    .reduce((sum, h) => sum + (h.pointsEarned || 0), 0);
+  
+  // Tampilkan statistik ringkasan
+  document.getElementById('statsSummary').innerHTML = `
+    <div class="stat-summary-card">
+      <i class="fas fa-list"></i>
+      <div class="stat-summary-info">
+        <h3>${totalQuizzes}</h3>
+        <p>Total Kuis</p>
+      </div>
+    </div>
+    <div class="stat-summary-card">
+      <i class="fas fa-check-circle"></i>
+      <div class="stat-summary-info">
+        <h3>${completedQuizzes}</h3>
+        <p>Telah Dikerjakan</p>
+      </div>
+    </div>
+    <div class="stat-summary-card">
+      <i class="fas fa-star"></i>
+      <div class="stat-summary-info">
+        <h3>${totalPoints}</h3>
+        <p>Total Poin</p>
+      </div>
+    </div>
+  `;
+  
+  function getCategoryClass(category) {
+    if (category === "Membaca") return "category-membaca";
+    if (category === "Menulis") return "category-menulis";
+    if (category === "Berhitung") return "category-berhitung";
+    return "";
+  }
+  
+  function getCategoryIcon(category) {
+    if (category === "Membaca") return "📖";
+    if (category === "Menulis") return "✏️";
+    if (category === "Berhitung") return "🔢";
+    return "📚";
+  }
+  
+  function renderQuizzes(kategori = '', level = '') {
+    let filtered = quizzes.filter(q => 
+      (kategori === '' || q.category === kategori) &&
+      (level === '' || q.level === level)
+    );
+    
+    let html = '';
+    if (filtered.length === 0) {
+      html = `<div class="empty-state">
+        <i class="fas fa-search"></i>
+        <h3>Tidak ada kuis</h3>
+        <p style="color:var(--gray-600);">Coba filter dengan kategori atau level lain</p>
+      </div>`;
+    } else {
+      filtered.forEach(q => {
+        const bestScore = getBestScore(q.id);
+        
+        html += `
+          <div class="quiz-card">
+            <div class="category-badge ${getCategoryClass(q.category)}">
+              ${getCategoryIcon(q.category)} ${q.category}
+            </div>
+            <h3>${q.title}</h3>
+            <div class="quiz-desc">${q.description}</div>
+            <div class="quiz-meta">
+              <span><i class="fas fa-question-circle"></i> ${q.totalSoal} soal</span>
+              <span><i class="far fa-clock"></i> ${q.duration} menit</span>
+              <span><i class="fas fa-graduation-cap"></i> ${q.level}</span>
+            </div>
+            <div class="quiz-footer">
+              <span class="points-badge"><i class="fas fa-star"></i> ${q.points} poin</span>
+              <a href="soal-kuis.html?id=${q.id}" class="btn-quiz">
+                <i class="fas fa-play"></i> Mulai Kuis
+              </a>
+            </div>
+            ${bestScore ? `<div class="best-score"><i class="fas fa-trophy"></i> Skor terbaik: ${bestScore}/${q.totalSoal * 10}</div>` : ''}
+          </div>
+        `;
+      });
+    }
+    document.getElementById('quizList').innerHTML = html;
+  }
+  
+  renderQuizzes();
+  
+  // Event filter
+  document.getElementById('kategoriFilter').addEventListener('change', (e) => {
+    renderQuizzes(e.target.value, document.getElementById('levelFilter').value);
+  });
+  
+  document.getElementById('levelFilter').addEventListener('change', (e) => {
+    renderQuizzes(document.getElementById('kategoriFilter').value, e.target.value);
+  });
+  
+  // Sidebar HTML
+  const sidebarHtml = `
+    <div class="sidebar-header">
+      <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+      <div class="logo-text">LenteraNusa</div>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li class="active"><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  
+  // Logout
+  document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    window.location = 'login.html';
+  });
+  
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  
+  // Tutup sidebar saat klik di luar (mobile)
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+</script>
+</body>
+</html>

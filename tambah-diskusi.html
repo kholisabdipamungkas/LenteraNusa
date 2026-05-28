@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tambah Diskusi | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Back Link */
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    
+    /* Form Card */
+    .form-card { background: white; border-radius: var(--border-radius-card); padding: 2rem; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); max-width: 700px; margin: 0 auto; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--gray-800); }
+    .form-group label i { margin-right: 0.5rem; color: var(--primary); }
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--gray-200); border-radius: 12px; font-family: inherit; font-size: 0.9rem; transition: 0.2s; background: #FEF9F0; }
+    .form-group input:focus, 
+    .form-group select:focus, 
+    .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,33,182,0.1); }
+    .form-group textarea { resize: vertical; }
+    .form-hint { font-size: 0.7rem; color: var(--gray-600); margin-top: 0.25rem; }
+    .btn-submit { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 0.75rem 2rem; border-radius: 40px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-submit:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-cancel { background: var(--gray-100); color: var(--gray-600); border: none; padding: 0.75rem 2rem; border-radius: 40px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: 0.2s; }
+    .btn-cancel:hover { background: var(--gray-200); }
+    .form-actions { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .form-card { padding: 1.5rem; }
+      .form-actions { flex-direction: column; }
+      .btn-submit, .btn-cancel { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <a href="forum.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Forum</a>
+    
+    <div class="page-header">
+      <h1>➕ Buat Diskusi Baru</h1>
+      <p>Mulai diskusi baru dan bagikan pertanyaan atau ide kamu</p>
+    </div>
+    
+    <div class="form-card">
+      <form id="newForumForm">
+        <div class="form-group">
+          <label><i class="fas fa-heading"></i> Judul Diskusi</label>
+          <input type="text" id="title" placeholder="Contoh: Bagaimana cara belajar matematika yang efektif?" required>
+          <div class="form-hint">Buat judul yang jelas dan menarik agar mudah dipahami</div>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-tag"></i> Kategori</label>
+          <select id="category" required>
+            <option value="">Pilih Kategori</option>
+            <option value="Matematika">📐 Matematika</option>
+            <option value="Bahasa Indonesia">📖 Bahasa Indonesia</option>
+            <option value="Bahasa Inggris">🇬🇧 Bahasa Inggris</option>
+            <option value="IPA">🔬 IPA</option>
+            <option value="IPS">🌍 IPS</option>
+            <option value="Tips Belajar">💡 Tips Belajar</option>
+            <option value="Umum">🗣️ Umum</option>
+          </select>
+          <div class="form-hint">Pilih kategori yang sesuai dengan topik diskusi</div>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-align-left"></i> Isi Diskusi</label>
+          <textarea id="content" rows="6" placeholder="Jelaskan pertanyaan atau topik diskusimu secara detail. Semakin jelas penjelasanmu, semakin mudah orang lain membantumu..." required></textarea>
+          <div class="form-hint">Tuliskan pertanyaan atau topik dengan jelas agar mudah dipahami</div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Posting Diskusi</button>
+          <a href="forum.html" class="btn-cancel"><i class="fas fa-times"></i> Batal</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  document.getElementById('newForumForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const title = document.getElementById('title').value.trim();
+    const category = document.getElementById('category').value;
+    const content = document.getElementById('content').value.trim();
+    
+    // Validasi
+    if (title === '') {
+      alert('Judul diskusi tidak boleh kosong!');
+      return;
+    }
+    if (category === '') {
+      alert('Pilih kategori terlebih dahulu!');
+      return;
+    }
+    if (content === '') {
+      alert('Isi diskusi tidak boleh kosong!');
+      return;
+    }
+    
+    let forums = JSON.parse(localStorage.getItem('forums')) || [];
+    
+    let newForum = {
+      id: Date.now(),
+      title: title,
+      author: currentUser.name,
+      category: category,
+      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+      replies: 0,
+      views: 0,
+      content: content,
+      comments: []
+    };
+    
+    forums.unshift(newForum); // Tambah di awal agar muncul pertama
+    localStorage.setItem('forums', JSON.stringify(forums));
+    
+    alert('✅ Diskusi berhasil dibuat!');
+    window.location.href = 'forum.html';
+  });
+  
+  // Sidebar lengkap
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li class="active"><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

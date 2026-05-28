@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Toko Hadiah | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Points Card */
+    .points-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--border-radius-card); padding: 1rem 2rem; color: white; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+    .shop-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+    
+    /* Cart Icon */
+    .cart-icon { position: relative; cursor: pointer; transition: 0.2s; }
+    .cart-icon:hover { transform: scale(1.05); }
+    .cart-count { position: absolute; top: -8px; right: -8px; background: #EF4444; color: white; font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 50%; }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: var(--border-radius-card); padding: 1rem; text-align: center; border: 1px solid var(--gray-200); }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .stat-card .label { font-size: 0.7rem; color: var(--gray-600); margin-top: 0.25rem; }
+    
+    /* Filter Bar */
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .search-wrapper { flex: 1; position: relative; }
+    .search-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-600); }
+    .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--gray-200); border-radius: 40px; background: white; font-size: 0.875rem; transition: 0.2s; }
+    .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,33,182,0.1); }
+    .filter-select { padding: 0.75rem 1.5rem; border-radius: 40px; border: 1px solid var(--gray-200); background: white; font-size: 0.875rem; cursor: pointer; transition: 0.2s; }
+    .filter-select:focus { outline: none; border-color: var(--primary); }
+    
+    /* Product Grid */
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .product-card { 
+      background: white; 
+      border-radius: var(--border-radius-card); 
+      padding: 1.5rem; 
+      border: 1px solid var(--gray-200); 
+      transition: all 0.2s; 
+      position: relative;
+      cursor: pointer;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .product-icon { font-size: 3rem; margin-bottom: 1rem; text-align: center; }
+    .product-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; text-align: center; }
+    .product-desc { font-size: 0.7rem; color: var(--gray-600); margin-bottom: 0.5rem; text-align: center; }
+    .product-price { color: var(--primary); font-weight: 700; margin: 0.5rem 0; text-align: center; font-size: 1.1rem; }
+    .product-stock { font-size: 0.7rem; color: var(--gray-600); text-align: center; margin-bottom: 1rem; }
+    .product-stock.available { color: #10B981; }
+    .product-stock.low { color: #F59E0B; }
+    .product-stock.soldout { color: #EF4444; }
+    .btn-buy { 
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+      color: white; 
+      border: none; 
+      padding: 0.6rem 1rem; 
+      border-radius: 40px; 
+      cursor: pointer; 
+      width: 100%; 
+      font-weight: 600; 
+      transition: all 0.2s; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+    .btn-buy:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-buy.out-of-stock { background: var(--gray-200); color: var(--gray-600); cursor: not-allowed; }
+    
+    /* Empty State */
+    .empty-state { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); }
+    .empty-state i { font-size: 3rem; color: var(--gray-600); margin-bottom: 1rem; display: block; }
+    .empty-state h3 { margin-bottom: 0.5rem; }
+    .empty-state p { color: var(--gray-600); }
+    
+    /* Notification */
+    .notification { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 12px; color: white; z-index: 1001; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .stats-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+      .filter-bar { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>🎁 Toko Hadiah</h1>
+      <p>Tukarkan poinmu dengan hadiah menarik!</p>
+    </div>
+    
+    <div class="shop-header">
+  <div class="points-card" id="userPoints">
+    <i class="fas fa-coins"></i> <span id="pointsValue">0</span> poin
+  </div>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+    <a href="riwayat-transaksi.html" class="transaction-icon" style="color: var(--primary); font-size: 1.3rem; transition: 0.2s;">
+      <i class="fas fa-history"></i>
+    </a>
+    <a href="keranjang.html" class="cart-icon" style="position: relative; color: var(--primary); font-size: 1.5rem; transition: 0.2s;">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-count" id="cartCount">0</span>
+    </a>
+  </div>
+</div>
+    
+    <div class="stats-grid" id="statsGrid"></div>
+    
+    <div class="filter-bar">
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchProduct" class="search-input" placeholder="Cari produk...">
+      </div>
+      <select id="categoryFilter" class="filter-select">
+        <option value="">📦 Semua Kategori</option>
+        <option value="Buku">📖 Buku</option>
+        <option value="Alat Tulis">✏️ Alat Tulis</option>
+        <option value="Permainan">🎮 Permainan</option>
+        <option value="Merchandise">👕 Merchandise</option>
+      </select>
+    </div>
+    
+    <div id="productGrid" class="product-grid"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  let userPoints = currentUser.points || 100000;
+  document.getElementById('pointsValue').innerText = userPoints;
+  
+  let products = JSON.parse(localStorage.getItem('products')) || [];
+  if (products.length === 0) {
+    products = [
+      { id: 1, name: "Buku Cerita Anak", category: "Buku", price: 500, stock: 15, image: "📖", description: "Kumpulan cerita rakyat Nusantara yang menarik untuk dibaca" },
+      { id: 2, name: "Set Pensil Warna", category: "Alat Tulis", price: 300, stock: 25, image: "✏️", description: "24 warna berkualitas tinggi untuk mewarnai" },
+      { id: 3, name: "Puzzle Peta Indonesia", category: "Permainan", price: 400, stock: 10, image: "🧩", description: "100 pieces puzzle edukatif tentang peta Indonesia" },
+      { id: 4, name: "Kaos LenteraNusa", category: "Merchandise", price: 800, stock: 5, image: "👕", description: "Kaos eksklusif edisi terbatas" },
+      { id: 5, name: "Buku Latihan Soal", category: "Buku", price: 450, stock: 20, image: "📚", description: "Lengkap dengan pembahasan dan kunci jawaban" },
+      { id: 6, name: "Stiker Edukatif", category: "Alat Tulis", price: 100, stock: 50, image: "🌟", description: "Stiker lucu untuk reward belajar" }
+    ];
+    localStorage.setItem('products', JSON.stringify(products));
+  }
+  
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+  function updateCartCount() {
+    document.getElementById('cartCount').innerText = cart.length;
+  }
+  
+  function getStockClass(stock) {
+    if (stock === 0) return 'soldout';
+    if (stock < 5) return 'low';
+    return 'available';
+  }
+  
+  function getStockText(stock) {
+    if (stock === 0) return 'Stok Habis';
+    if (stock < 5) return `Stok: ${stock} (tersisa sedikit)`;
+    return `Stok: ${stock}`;
+  }
+  
+  function showNotification(message, isSuccess = true) {
+    const notif = document.createElement('div');
+    notif.className = 'notification';
+    notif.style.background = isSuccess ? '#10B981' : '#EF4444';
+    notif.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      notif.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notif.remove(), 300);
+    }, 3000);
+  }
+  
+  // Statistik
+  let totalProducts = products.length;
+  let totalCategories = [...new Set(products.map(p => p.category))].length;
+  let cheapestProduct = Math.min(...products.map(p => p.price));
+  
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="value">${totalProducts}</div>
+      <div class="label">Total Produk</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">${totalCategories}</div>
+      <div class="label">Kategori</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">⭐ ${cheapestProduct}</div>
+      <div class="label">Termurah</div>
+    </div>
+  `;
+  
+  function renderProducts(search = '', category = '') {
+    let filtered = products.filter(p => 
+      p.name.toLowerCase().includes(search.toLowerCase()) && 
+      (category === '' || p.category === category)
+    );
+    
+    let html = '';
+    if (filtered.length === 0) {
+      html = `
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <h3>Tidak ada produk</h3>
+          <p>Coba cari dengan kata kunci lain</p>
+        </div>
+      `;
+    } else {
+      filtered.forEach(p => {
+        const stockClass = getStockClass(p.stock);
+        const isOutOfStock = p.stock === 0;
+        const stockText = getStockText(p.stock);
+        
+        html += `
+          <div class="product-card" data-id="${p.id}">
+            <div class="product-icon">${p.image}</div>
+            <div class="product-title">${escapeHtml(p.name)}</div>
+            <div class="product-desc">${escapeHtml(p.description)}</div>
+            <div class="product-price"><i class="fas fa-star"></i> ${p.price} poin</div>
+            <div class="product-stock ${stockClass}">${stockText}</div>
+            <button class="btn-buy ${isOutOfStock ? 'out-of-stock' : ''}" data-id="${p.id}" ${isOutOfStock ? 'disabled' : ''}>
+              <i class="fas ${isOutOfStock ? 'fa-ban' : 'fa-cart-plus'}"></i> 
+              ${isOutOfStock ? 'Stok Habis' : 'Tukar Sekarang'}
+            </button>
+          </div>
+        `;
+      });
+    }
+    document.getElementById('productGrid').innerHTML = html;
+    
+    // Event listener untuk klik card (mengarah ke detail produk)
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-buy')) return;
+        const id = parseInt(card.dataset.id);
+        window.location.href = `detail-produk.html?id=${id}`;
+      });
+    });
+    
+    // Event listener untuk tombol beli
+    document.querySelectorAll('.btn-buy:not(.out-of-stock)').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = parseInt(btn.dataset.id);
+        const product = products.find(p => p.id === id);
+        if (product && userPoints >= product.price) {
+          cart.push({ ...product, addedAt: new Date().toISOString() });
+          localStorage.setItem('cart', JSON.stringify(cart));
+          updateCartCount();
+          showNotification(`✅ ${product.name} ditambahkan ke keranjang!`, true);
+        } else if (product && userPoints < product.price) {
+          showNotification(`❌ Poin tidak cukup! Butuh ${product.price - userPoints} poin lagi.`, false);
+        }
+      });
+    });
+  }
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  renderProducts();
+  
+  // Event filter
+  document.getElementById('searchProduct').addEventListener('input', e => 
+    renderProducts(e.target.value, document.getElementById('categoryFilter').value));
+  document.getElementById('categoryFilter').addEventListener('change', e => 
+    renderProducts(document.getElementById('searchProduct').value, e.target.value));
+  
+  updateCartCount();
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li class="active"><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Keranjang Belanja | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    
+    .points-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--border-radius-card); padding: 1rem 1.5rem; color: white; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+    
+    .cart-layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; }
+    .cart-items-section { background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); overflow: hidden; }
+    .cart-header { display: flex; align-items: center; padding: 1rem 1.5rem; background: var(--gray-100); border-bottom: 1px solid var(--gray-200); font-weight: 600; color: var(--gray-600); font-size: 0.875rem; }
+    .cart-header-item { flex: 1; }
+    .cart-header-price { width: 100px; text-align: right; }
+    .cart-header-action { width: 80px; text-align: center; }
+    .cart-item { display: flex; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid var(--gray-200); transition: 0.2s; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item:hover { background: var(--gray-100); }
+    .cart-item-info { flex: 1; display: flex; align-items: center; gap: 1rem; }
+    .cart-item-icon { width: 50px; height: 50px; background: var(--gray-100); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .cart-item-details h4 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .cart-item-details p { font-size: 0.7rem; color: var(--gray-600); }
+    .cart-item-price { width: 100px; text-align: right; font-weight: 700; color: var(--primary); }
+    .cart-item-action { width: 80px; text-align: center; }
+    .btn-remove { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 1rem; padding: 0.25rem 0.5rem; border-radius: 20px; transition: 0.2s; }
+    .btn-remove:hover { background: #FEE2E2; }
+    
+    .cart-summary-section { background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); padding: 1.5rem; position: sticky; top: 2rem; height: fit-content; }
+    .cart-summary-section h3 { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .summary-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200); }
+    .summary-row.total { border-bottom: none; padding-top: 1rem; font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+    .btn-checkout { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 0.85rem 1rem; border-radius: 40px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 1rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 1rem; }
+    .btn-checkout:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-continue { background: var(--gray-100); color: var(--gray-600); border: none; padding: 0.75rem 1rem; border-radius: 40px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 0.75rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
+    .btn-continue:hover { background: var(--gray-200); }
+    .warning-text { font-size: 0.75rem; color: #EF4444; margin-top: 0.75rem; text-align: center; padding: 0.5rem; background: #FEE2E2; border-radius: 12px; }
+    
+    .empty-state { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); }
+    .empty-state i { font-size: 4rem; color: var(--gray-600); margin-bottom: 1rem; display: block; }
+    .empty-state h3 { margin-bottom: 0.5rem; }
+    .empty-state p { color: var(--gray-600); margin-bottom: 1.5rem; }
+    
+    .notification { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 12px; color: white; z-index: 1001; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .cart-layout { grid-template-columns: 1fr; }
+      .cart-header { display: none; }
+      .cart-item { flex-wrap: wrap; gap: 1rem; }
+      .cart-item-info { flex: 1 1 100%; }
+      .cart-item-price { width: auto; text-align: left; }
+      .cart-item-action { width: auto; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <a href="toko-hadiah.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Toko</a>
+    
+    <div class="page-header">
+      <h1>🛒 Keranjang Belanja</h1>
+      <p>Review pesananmu sebelum checkout</p>
+    </div>
+    
+    <div class="points-card" id="userPointsCard">
+      <i class="fas fa-coins"></i> <span id="pointsValue">0</span> poin tersedia
+    </div>
+    
+    <div id="cartContent"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let userPoints = currentUser.points || 1000000;
+  
+  document.getElementById('pointsValue').innerText = userPoints;
+  
+  function showNotification(message, isSuccess = true) {
+    const notif = document.createElement('div');
+    notif.className = 'notification';
+    notif.style.background = isSuccess ? '#10B981' : '#EF4444';
+    notif.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      notif.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notif.remove(), 300);
+    }, 3000);
+  }
+  
+  function renderCart() {
+    const updatedUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (updatedUser) {
+      userPoints = updatedUser.points || 1000000;
+      document.getElementById('pointsValue').innerText = userPoints;
+    }
+    
+    if (cart.length === 0) {
+      document.getElementById('cartContent').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-shopping-cart"></i>
+          <h3>Keranjang Kosong</h3>
+          <p>Belum ada produk di keranjang belanjamu</p>
+          <a href="toko-hadiah.html" class="btn-continue" style="display: inline-flex; width: auto; padding: 0.75rem 1.5rem;">
+            <i class="fas fa-shopping-bag"></i> Belanja Sekarang
+          </a>
+        </div>
+      `;
+      return;
+    }
+    
+    let totalPoints = cart.reduce((sum, item) => sum + item.price, 0);
+    let canCheckout = userPoints >= totalPoints;
+    let remainingPoints = userPoints - totalPoints;
+    
+    let itemsHtml = '';
+    cart.forEach((item, idx) => {
+      itemsHtml += `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-icon">${item.image || '🎁'}</div>
+            <div class="cart-item-details">
+              <h4>${escapeHtml(item.name)}</h4>
+              <p>${item.category || 'Produk'} • Stok tersedia</p>
+            </div>
+          </div>
+          <div class="cart-item-price">⭐ ${item.price} poin</div>
+          <div class="cart-item-action">
+            <button class="btn-remove" data-index="${idx}"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        </div>
+      `;
+    });
+    
+    document.getElementById('cartContent').innerHTML = `
+      <div class="cart-layout">
+        <div class="cart-items-section">
+          <div class="cart-header">
+            <div class="cart-header-item">Produk</div>
+            <div class="cart-header-price">Harga</div>
+            <div class="cart-header-action">Aksi</div>
+          </div>
+          ${itemsHtml}
+        </div>
+        
+        <div class="cart-summary-section">
+          <h3><i class="fas fa-receipt"></i> Ringkasan Belanja</h3>
+          <div class="summary-row">
+            <span>Total Item</span>
+            <span>${cart.length} produk</span>
+          </div>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>⭐ ${totalPoints} poin</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>⭐ ${totalPoints} poin</span>
+          </div>
+          <div class="summary-row">
+            <span>Sisa Poin</span>
+            <span style="color: ${remainingPoints >= 0 ? '#10B981' : '#EF4444'}">⭐ ${remainingPoints} poin</span>
+          </div>
+          ${!canCheckout ? `<div class="warning-text"><i class="fas fa-exclamation-triangle"></i> Poin tidak cukup! Butuh ${totalPoints - userPoints} poin lagi.</div>` : ''}
+          <button class="btn-checkout" id="checkoutBtn" ${!canCheckout ? 'disabled' : ''}>
+            <i class="fas fa-credit-card"></i> Checkout Sekarang
+          </button>
+          <a href="toko-hadiah.html" class="btn-continue">
+            <i class="fas fa-shopping-bag"></i> Lanjut Belanja
+          </a>
+        </div>
+      </div>
+    `;
+    
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.dataset.index);
+        cart.splice(idx, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+        showNotification('Item berhasil dihapus dari keranjang', true);
+      });
+    });
+    
+    document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+      let total = cart.reduce((sum, item) => sum + item.price, 0);
+      if (userPoints >= total) {
+        window.location.href = 'checkout.html';
+      } else {
+        showNotification(`❌ Poin tidak cukup! Butuh ${total - userPoints} poin lagi.`, false);
+      }
+    });
+  }
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  renderCart();
+  
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li class="active"><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

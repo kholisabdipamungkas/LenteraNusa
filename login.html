@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(145deg, #FEF9F0 0%, #FDF4E8 100%);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      max-width: 480px;
+      width: 100%;
+      background: white;
+      border-radius: 48px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.08);
+      padding: 44px 36px;
+      transition: 0.3s;
+    }
+    .logo {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #8B5CF6, #6366F1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 12px;
+    }
+    h2 {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      color: #0F172A;
+    }
+    .sub {
+      text-align: center;
+      color: #64748B;
+      margin-bottom: 32px;
+    }
+    .tabs {
+      display: flex;
+      gap: 12px;
+      background: #F1F5F9;
+      padding: 6px;
+      border-radius: 80px;
+      margin-bottom: 32px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 60px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      background: transparent;
+      color: #334155;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, #8B5CF6, #6366F1);
+      color: white;
+      box-shadow: 0 6px 14px rgba(99,102,241,0.3);
+    }
+    .input-group {
+      margin-bottom: 24px;
+    }
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #1E293B;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #E2E8F0;
+      border-radius: 40px;
+      font-size: 16px;
+      background: #FEF9F0;
+      transition: 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: #8B5CF6;
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+    }
+    .checkbox-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, #8B5CF6, #6366F1);
+      border: none;
+      padding: 16px;
+      border-radius: 60px;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .btn-login:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 30px -10px rgba(99,102,241,0.4);
+    }
+    .register-link {
+      text-align: center;
+      margin-top: 28px;
+      color: #64748B;
+    }
+    .register-link a {
+      color: #8B5CF6;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .error-alert {
+      background: #FFE4E2;
+      color: #B91C1C;
+      padding: 14px;
+      border-radius: 40px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+      font-weight: 500;
+    }
+    @media (max-width: 500px) {
+      .card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo"><i class="fas fa-feather-alt"></i> LenteraNusa</div>
+  <h2>Masuk ke Akun</h2>
+  <div class="sub">Lanjutkan belajar dan raih prestasi!</div>
+  <div class="tabs">
+    <div class="tab active" data-role="siswa">Siswa</div>
+    <div class="tab" data-role="admin">Admin</div>
+  </div>
+  <div id="errorMsg" class="error-alert"></div>
+  <form id="loginForm">
+    <div class="input-group">
+      <label><i class="far fa-envelope"></i> Email</label>
+      <input type="email" id="email" placeholder="nama@email.com" required>
+    </div>
+    <div class="input-group">
+      <label><i class="fas fa-lock"></i> Password</label>
+      <input type="password" id="password" placeholder="Masukkan password" required>
+    </div>
+    <div class="checkbox-row">
+      <label style="display: flex; gap: 8px;"><input type="checkbox"> Ingat saya</label>
+      <a href="#" style="color:#8B5CF6; text-decoration: none;">Lupa password?</a>
+    </div>
+    <button type="submit" class="btn-login">Masuk</button>
+  </form>
+  <div class="register-link">Belum punya akun? <a href="register.html">Daftar di sini</a></div>
+</div>
+<script>
+  let selectedRole = 'siswa';
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      selectedRole = tab.dataset.role;
+    });
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.email === email && u.password === password && u.role === selectedRole);
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      if (user.role === 'siswa') window.location.href = 'dashboard-user.html';
+      else window.location.href = 'dashboard-admin.html';
+    } else {
+      const errDiv = document.getElementById('errorMsg');
+      errDiv.style.display = 'block';
+      errDiv.innerText = `❌ Login gagal! Email/password salah atau role ${selectedRole} tidak sesuai.`;
+    }
+  });
+</script>
+</body>
+</html>

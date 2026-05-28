@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Hasil Kuis | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    .result-card { max-width: 550px; margin: 0 auto; background: white; border-radius: var(--border-radius-card); padding: 2rem; border: 1px solid var(--gray-200); box-shadow: var(--shadow-md); }
+    .result-header { text-align: center; margin-bottom: 1.5rem; }
+    .result-header h1 { font-size: 1.75rem; margin-bottom: 0.5rem; color: var(--gray-800); }
+    .quiz-title { color: var(--gray-600); font-size: 0.875rem; }
+    .score-wrapper { text-align: center; margin: 1.5rem 0; }
+    .score-circle { width: 160px; height: 160px; margin: 0 auto; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; box-shadow: 0 10px 25px -5px rgba(91,33,182,0.3); }
+    .score-number { font-size: 2.8rem; font-weight: 800; }
+    .score-total { font-size: 0.9rem; opacity: 0.9; }
+    .score-percentage { margin-top: 1rem; font-size: 1rem; font-weight: 600; color: var(--primary); }
+    .message-box { text-align: center; margin: 1.5rem 0; padding: 1rem; background: var(--gray-100); border-radius: 16px; }
+    .message-box h3 { font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .message-box p { color: var(--gray-600); font-size: 0.875rem; }
+    .points-box { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #EEF2FF, #E0E7FF); padding: 0.75rem; border-radius: 40px; width: fit-content; margin: 0 auto 1.5rem auto; }
+    .points-box i { color: var(--primary); font-size: 1.2rem; }
+    .points-box span { font-weight: 700; font-size: 1.2rem; color: var(--primary); }
+    .stats-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card { flex: 1; background: var(--gray-100); padding: 1rem; border-radius: 16px; text-align: center; transition: 0.2s; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--gray-800); }
+    .stat-card .label { font-size: 0.7rem; color: var(--gray-600); margin-top: 0.25rem; }
+    .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 0.75rem 1.5rem; border-radius: 40px; text-decoration: none; font-weight: 600; font-size: 0.875rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background: var(--primary); color: white; }
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .stats-row { flex-direction: column; gap: 0.75rem; }
+      .score-circle { width: 130px; height: 130px; }
+      .score-number { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="result-card" id="resultContent"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const quizId = parseInt(urlParams.get('id'));
+  const score = parseInt(urlParams.get('score'));
+  const total = parseInt(urlParams.get('total'));
+  const points = parseInt(urlParams.get('points'));
+  const percentage = Math.round((score / total) * 100);
+  
+  const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+  const quiz = quizzes.find(q => q.id === quizId);
+  const quizTitle = quiz ? quiz.title : 'Kuis';
+  
+  let message = '';
+  let subMessage = '';
+  if (percentage >= 85) {
+    message = '🏆 Luar Biasa!';
+    subMessage = 'Kamu menguasai materi dengan sangat baik!';
+  } else if (percentage >= 70) {
+    message = '👍 Bagus!';
+    subMessage = 'Terus belajar untuk hasil yang lebih baik!';
+  } else if (percentage >= 50) {
+    message = '📚 Cukup!';
+    subMessage = 'Ayo coba lagi, pasti bisa lebih baik!';
+  } else {
+    message = '💪 Semangat!';
+    subMessage = 'Jangan menyerah, pelajari lagi materinya ya!';
+  }
+  
+  document.getElementById('resultContent').innerHTML = `
+    <div class="result-header">
+      <h1>Hasil Kuis</h1>
+      <div class="quiz-title">${quizTitle}</div>
+    </div>
+    
+    <div class="score-wrapper">
+      <div class="score-circle">
+        <div>
+          <div class="score-number">${score}/${total}</div>
+          <div class="score-total">benar</div>
+        </div>
+      </div>
+      <div class="score-percentage">${percentage}%</div>
+    </div>
+    
+    <div class="message-box">
+      <h3>${message}</h3>
+      <p>${subMessage}</p>
+    </div>
+    
+    <div class="points-box">
+      <i class="fas fa-gem"></i>
+      <span>+${points} Poin</span>
+    </div>
+    
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="value">${score}</div>
+        <div class="label">Soal Benar</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">${total - score}</div>
+        <div class="label">Soal Salah</div>
+      </div>
+      <div class="stat-card">
+        <div class="value">${points}</div>
+        <div class="label">Poin Didapat</div>
+      </div>
+    </div>
+    
+    <div class="btn-group">
+      <a href="paket-kuis.html" class="btn"><i class="fas fa-list"></i> Kuis Lainnya</a>
+      <a href="dashboard-user.html" class="btn btn-outline"><i class="fas fa-home"></i> Dashboard</a>
+      ${percentage < 75 ? `<a href="soal-kuis.html?id=${quizId}" class="btn btn-outline"><i class="fas fa-redo-alt"></i> Coba Lagi</a>` : ''}
+    </div>
+  `;
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li class="active"><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

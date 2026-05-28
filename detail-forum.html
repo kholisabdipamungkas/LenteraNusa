@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Detail Forum | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Back Link */
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    
+    /* Forum Detail */
+    .forum-detail { background: white; border-radius: var(--border-radius-card); padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid var(--gray-200); }
+    .forum-category { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; background: #EEF2FF; color: var(--primary); margin-bottom: 1rem; }
+    .forum-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .forum-meta { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--gray-200); font-size: 0.875rem; color: var(--gray-600); }
+    .forum-meta i { margin-right: 0.25rem; }
+    .forum-content { line-height: 1.8; margin: 1rem 0; padding: 1rem; background: var(--gray-100); border-radius: 16px; }
+    .forum-stats { display: flex; gap: 1.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200); font-size: 0.875rem; color: var(--gray-600); }
+    
+    /* Comments Section */
+    .comments-section { margin-top: 1rem; }
+    .comments-title { font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .comment-item { background: var(--gray-100); border-radius: 16px; padding: 1rem; margin-bottom: 1rem; transition: 0.2s; }
+    .comment-item:hover { background: #E8EDF5; }
+    .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .comment-author { font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .comment-author i { color: var(--primary); }
+    .comment-date { font-size: 0.7rem; color: var(--gray-600); }
+    .comment-text { color: var(--gray-700); line-height: 1.5; }
+    
+    /* Comment Form */
+    .comment-form { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200); }
+    .comment-form textarea { width: 100%; padding: 1rem; border: 1px solid var(--gray-200); border-radius: 16px; resize: vertical; font-family: inherit; font-size: 0.875rem; margin-bottom: 1rem; transition: 0.2s; }
+    .comment-form textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,33,182,0.1); }
+    .btn-submit { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 40px; cursor: pointer; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-submit:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    
+    /* Empty State */
+    .empty-comment { text-align: center; padding: 2rem; background: var(--gray-100); border-radius: 16px; color: var(--gray-600); }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .forum-title { font-size: 1.2rem; }
+      .forum-meta { gap: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <a href="forum.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Forum</a>
+    <div id="forumDetail"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const forumId = parseInt(urlParams.get('id'));
+  let forums = JSON.parse(localStorage.getItem('forums')) || [];
+  const forumIndex = forums.findIndex(f => f.id === forumId);
+  const forum = forumIndex !== -1 ? forums[forumIndex] : null;
+  
+  function getCategoryIcon(category) {
+    const icons = {
+      'Matematika': '📐',
+      'Bahasa Indonesia': '📖',
+      'Bahasa Inggris': '🇬🇧',
+      'IPA': '🔬',
+      'IPS': '🌍',
+      'Tips Belajar': '💡',
+      'Umum': '🗣️'
+    };
+    return icons[category] || '📌';
+  }
+  
+  function updateForumStats() {
+    if (forumIndex !== -1) {
+      forums[forumIndex] = forum;
+      localStorage.setItem('forums', JSON.stringify(forums));
+    }
+  }
+  
+  function renderComments() {
+    const container = document.getElementById('commentsList');
+    if (!container) return;
+    
+    let comments = forum.comments || [];
+    if (comments.length === 0) {
+      container.innerHTML = '<div class="empty-comment"><i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>Belum ada balasan. Jadilah yang pertama!</div>';
+      return;
+    }
+    
+    let commentsHtml = '';
+    comments.forEach((c, idx) => {
+      commentsHtml += `
+        <div class="comment-item">
+          <div class="comment-header">
+            <div class="comment-author">
+              <i class="fas fa-user-circle"></i> ${escapeHtml(c.name || c.author)}
+            </div>
+            <div class="comment-date">
+              <i class="far fa-calendar-alt"></i> ${c.date}
+            </div>
+          </div>
+          <div class="comment-text">${escapeHtml(c.text)}</div>
+        </div>
+      `;
+    });
+    container.innerHTML = commentsHtml;
+  }
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  if (!forum) {
+    document.getElementById('forumDetail').innerHTML = `
+      <div class="forum-detail" style="text-align: center;">
+        <i class="fas fa-comment-slash" style="font-size: 3rem; color: var(--gray-600);"></i>
+        <h2 style="margin: 1rem 0;">Forum tidak ditemukan</h2>
+        <a href="forum.html" class="btn-submit" style="display: inline-flex;">Kembali ke Forum</a>
+      </div>
+    `;
+  } else {
+    // Update views
+    forum.views = (forum.views || 0) + 1;
+    updateForumStats();
+    
+    let comments = forum.comments || [];
+    
+    document.getElementById('forumDetail').innerHTML = `
+      <div class="forum-detail">
+        <div class="forum-category">
+          ${getCategoryIcon(forum.category)} ${forum.category}
+        </div>
+        <h1 class="forum-title">${escapeHtml(forum.title)}</h1>
+        <div class="forum-meta">
+          <span><i class="fas fa-user"></i> ${escapeHtml(forum.author)}</span>
+          <span><i class="far fa-calendar-alt"></i> ${forum.date}</span>
+        </div>
+        <div class="forum-content">
+          ${escapeHtml(forum.content).replace(/\n/g, '<br>')}
+        </div>
+        <div class="forum-stats">
+          <span><i class="fas fa-comment"></i> ${forum.replies || comments.length} balasan</span>
+          <span><i class="fas fa-eye"></i> ${(forum.views || 0).toLocaleString()} dilihat</span>
+        </div>
+      </div>
+      
+      <div class="forum-detail">
+        <div class="comments-title">
+          <i class="fas fa-comments" style="color: var(--primary);"></i> 
+          Balasan (${comments.length})
+        </div>
+        <div id="commentsList"></div>
+        
+        <div class="comment-form">
+          <textarea id="newComment" rows="3" placeholder="Tulis balasan kamu..."></textarea>
+          <button class="btn-submit" id="submitComment">
+            <i class="fas fa-paper-plane"></i> Kirim Balasan
+          </button>
+        </div>
+      </div>
+    `;
+    
+    renderComments();
+    
+    // Submit komentar
+    document.getElementById('submitComment').addEventListener('click', () => {
+      const text = document.getElementById('newComment').value.trim();
+      if (text === '') {
+        alert('Balasan tidak boleh kosong!');
+        return;
+      }
+      
+      const newComment = {
+        name: currentUser.name,
+        author: currentUser.name,
+        text: text,
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+      };
+      
+      if (!forum.comments) forum.comments = [];
+      forum.comments.unshift(newComment);
+      forum.replies = forum.comments.length;
+      
+      updateForumStats();
+      renderComments();
+      
+      // Update tampilan jumlah balasan
+      const commentsTitle = document.querySelector('.comments-title');
+      if (commentsTitle) {
+        commentsTitle.innerHTML = `<i class="fas fa-comments" style="color: var(--primary);"></i> Balasan (${forum.comments.length})`;
+      }
+      
+      // Update statistik di header
+      const forumStats = document.querySelector('.forum-stats');
+      if (forumStats) {
+        forumStats.innerHTML = `
+          <span><i class="fas fa-comment"></i> ${forum.replies} balasan</span>
+          <span><i class="fas fa-eye"></i> ${(forum.views || 0).toLocaleString()} dilihat</span>
+        `;
+      }
+      
+      document.getElementById('newComment').value = '';
+    });
+  }
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li class="active"><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

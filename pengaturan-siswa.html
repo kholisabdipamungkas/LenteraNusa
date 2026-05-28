@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Pengaturan | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Settings Layout */
+    .settings-wrapper { max-width: 800px; margin: 0 auto; }
+    .settings-card { background: white; border-radius: var(--border-radius-card); padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid var(--gray-200); transition: 0.2s; }
+    .settings-card:hover { box-shadow: var(--shadow-sm); }
+    .settings-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 0.75rem; }
+    .settings-icon { width: 40px; height: 40px; background: #EEF2FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; }
+    .settings-header h3 { font-size: 1.1rem; margin: 0; }
+    
+    /* Switch Toggle */
+    .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-100); }
+    .setting-item:last-child { border-bottom: none; }
+    .setting-info .title { font-weight: 500; margin-bottom: 0.25rem; }
+    .setting-info .desc { font-size: 0.7rem; color: var(--gray-600); }
+    .toggle-switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--gray-200); transition: 0.3s; border-radius: 34px; }
+    .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+    input:checked + .toggle-slider { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+    input:checked + .toggle-slider:before { transform: translateX(26px); }
+    
+    /* Danger Zone */
+    .danger-zone { border: 1px solid #FECACA; background: #FEF2F2; }
+    .danger-header { color: #DC2626; }
+    .danger-header i { color: #DC2626; }
+    .btn-danger { background: #EF4444; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 40px; cursor: pointer; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-danger:hover { transform: scale(1.02); background: #DC2626; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+    .btn-warning { background: #F59E0B; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 40px; cursor: pointer; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; margin-right: 1rem; }
+    .btn-warning:hover { transform: scale(1.02); background: #D97706; }
+    .warning-text { font-size: 0.75rem; color: #DC2626; margin-top: 0.5rem; }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .setting-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>⚙️ Pengaturan Akun</h1>
+      <p>Atur preferensi dan keamanan akun kamu</p>
+    </div>
+    
+    <div class="settings-wrapper" id="settingsContent"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  // Load pengaturan dari localStorage
+  let userSettings = JSON.parse(localStorage.getItem('userSettings')) || {};
+  let settings = userSettings[currentUser.email] || {
+    emailNotif: true,
+    pushNotif: true,
+    darkMode: false
+  };
+  
+  function saveSettings() {
+    if (!userSettings[currentUser.email]) {
+      userSettings[currentUser.email] = {};
+    }
+    userSettings[currentUser.email] = settings;
+    localStorage.setItem('userSettings', JSON.stringify(userSettings));
+  }
+  
+  // Fungsi untuk menampilkan notifikasi temporary
+  function showNotification(message, isSuccess = true) {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: ${isSuccess ? '#10B981' : '#EF4444'};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    notif.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      notif.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notif.remove(), 300);
+    }, 3000);
+  }
+  
+  // Tambahkan style animasi
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  function renderSettings() {
+    const html = `
+      <!-- Notifikasi -->
+      <div class="settings-card">
+        <div class="settings-header">
+          <div class="settings-icon"><i class="fas fa-bell"></i></div>
+          <h3>Notifikasi</h3>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Notifikasi Email</div>
+            <div class="desc">Terima pemberitahuan melalui email</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="emailNotif" ${settings.emailNotif ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Notifikasi Push</div>
+            <div class="desc">Terima pemberitahuan di browser</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="pushNotif" ${settings.pushNotif ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Preferensi Tampilan -->
+      <div class="settings-card">
+        <div class="settings-header">
+          <div class="settings-icon"><i class="fas fa-palette"></i></div>
+          <h3>Preferensi Tampilan</h3>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Mode Gelap</div>
+            <div class="desc">Ubah tema tampilan menjadi gelap</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkMode" ${settings.darkMode ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Keamanan -->
+      <div class="settings-card">
+        <div class="settings-header">
+          <div class="settings-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Keamanan</h3>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Ubah Password</div>
+            <div class="desc">Ganti password akun kamu</div>
+          </div>
+          <button class="btn-warning" id="changePasswordBtn"><i class="fas fa-key"></i> Ubah Password</button>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Hapus Riwayat Aktivitas</div>
+            <div class="desc">Hapus semua riwayat kuis dan aktivitas</div>
+          </div>
+          <button class="btn-warning" id="clearHistoryBtn"><i class="fas fa-trash-alt"></i> Hapus Riwayat</button>
+        </div>
+      </div>
+      
+      <!-- Zona Berbahaya -->
+      <div class="settings-card danger-zone">
+        <div class="settings-header danger-header">
+          <div class="settings-icon" style="background: #FEE2E2;"><i class="fas fa-exclamation-triangle" style="color: #DC2626;"></i></div>
+          <h3 style="color: #DC2626;">Zona Berbahaya</h3>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Keluar dari Akun</div>
+            <div class="desc">Logout dari akun LenteraNusa</div>
+          </div>
+          <button class="btn-danger" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="title">Hapus Akun</div>
+            <div class="desc">Hapus akun secara permanen (tidak dapat dikembalikan)</div>
+          </div>
+          <button class="btn-danger" id="deleteAccountBtn"><i class="fas fa-user-slash"></i> Hapus Akun</button>
+        </div>
+        <div class="warning-text">
+          <i class="fas fa-info-circle"></i> Tindakan ini tidak dapat dibatalkan. Semua data akan hilang.
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('settingsContent').innerHTML = html;
+    
+    // Event listeners untuk toggle
+    document.getElementById('emailNotif').addEventListener('change', (e) => {
+      settings.emailNotif = e.target.checked;
+      saveSettings();
+      showNotification(`Notifikasi email ${settings.emailNotif ? 'diaktifkan' : 'dinonaktifkan'}`);
+    });
+    
+    document.getElementById('pushNotif').addEventListener('change', (e) => {
+      settings.pushNotif = e.target.checked;
+      saveSettings();
+      showNotification(`Notifikasi push ${settings.pushNotif ? 'diaktifkan' : 'dinonaktifkan'}`);
+    });
+    
+    document.getElementById('darkMode').addEventListener('change', (e) => {
+      settings.darkMode = e.target.checked;
+      saveSettings();
+      showNotification(`Mode gelap ${settings.darkMode ? 'diaktifkan' : 'dinonaktifkan'}`);
+      // Terapkan mode gelap
+      if (settings.darkMode) {
+        document.body.style.background = '#1E293B';
+        document.body.style.color = '#F1F5F9';
+      } else {
+        document.body.style.background = '#F8FAFC';
+        document.body.style.color = '#0F172A';
+      }
+    });
+    
+    // Ubah Password
+    document.getElementById('changePasswordBtn').addEventListener('click', () => {
+      const newPassword = prompt('Masukkan password baru (minimal 4 karakter):');
+      if (newPassword && newPassword.length >= 4) {
+        let users = JSON.parse(localStorage.getItem('users'));
+        const userIndex = users.findIndex(u => u.email === currentUser.email);
+        if (userIndex !== -1) {
+          users[userIndex].password = newPassword;
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+          showNotification('Password berhasil diubah!');
+        }
+      } else if (newPassword && newPassword.length < 4) {
+        alert('Password minimal 4 karakter!');
+      }
+    });
+    
+    // Hapus Riwayat
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+      if (confirm('Apakah Anda yakin ingin menghapus semua riwayat aktivitas? Tindakan ini tidak dapat dibatalkan.')) {
+        let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+        quizHistory = quizHistory.filter(h => h.userEmail !== currentUser.email);
+        localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        showNotification('Riwayat aktivitas berhasil dihapus!');
+      }
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Apakah Anda yakin ingin keluar?')) {
+        localStorage.removeItem('currentUser');
+        window.location = 'login.html';
+      }
+    });
+    
+    // Hapus Akun
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+      const confirmText = prompt('Ketik "HAPUS" untuk mengonfirmasi penghapusan akun permanen:');
+      if (confirmText === 'HAPUS') {
+        let users = JSON.parse(localStorage.getItem('users'));
+        const userIndex = users.findIndex(u => u.email === currentUser.email);
+        if (userIndex !== -1) {
+          users.splice(userIndex, 1);
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.removeItem('currentUser');
+          localStorage.removeItem('userSettings');
+          alert('Akun Anda telah dihapus. Terima kasih telah menggunakan LenteraNusa.');
+          window.location = 'login.html';
+        }
+      } else if (confirmText) {
+        alert('Konfirmasi tidak sesuai. Akun tidak dihapus.');
+      }
+    });
+  }
+  
+  // Terapkan mode gelap saat load
+  if (settings.darkMode) {
+    document.body.style.background = '#1E293B';
+    document.body.style.color = '#F1F5F9';
+  }
+  
+  renderSettings();
+  
+  // Sidebar lengkap
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li class="active"><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn2"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn2')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

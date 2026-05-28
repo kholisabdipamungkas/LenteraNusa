@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Riwayat Poin | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0; }
+    .tab { padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 600; border-radius: 40px 40px 0 0; transition: 0.2s; color: var(--gray-600); text-decoration: none; display: inline-block; }
+    .tab.active { color: var(--primary); background: #EEF2FF; }
+    .tab:not(.active):hover { color: var(--primary); background: var(--gray-100); }
+    
+    /* Points Summary */
+    .points-summary { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--border-radius-card); padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; color: white; }
+    .points-info .label { font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.25rem; }
+    .points-info .total { font-size: 3rem; font-weight: 800; line-height: 1; }
+    .points-info .sub { font-size: 0.75rem; opacity: 0.8; margin-top: 0.5rem; }
+    .points-icon i { font-size: 4rem; opacity: 0.8; }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: var(--border-radius-card); padding: 1rem; text-align: center; border: 1px solid var(--gray-200); }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .stat-card .label { font-size: 0.7rem; color: var(--gray-600); margin-top: 0.25rem; }
+    
+    /* Filter */
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .filter-select { padding: 0.5rem 1rem; border-radius: 40px; border: 1px solid var(--gray-200); background: white; font-size: 0.875rem; cursor: pointer; }
+    .filter-stats { font-size: 0.875rem; color: var(--gray-600); }
+    
+    /* History List */
+    .history-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .history-item { background: white; border-radius: var(--border-radius-card); padding: 1rem 1.25rem; border: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+    .history-item:hover { transform: translateX(4px); box-shadow: var(--shadow-sm); }
+    .history-info { flex: 1; }
+    .history-title { font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .history-badge { font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 20px; background: var(--gray-100); color: var(--gray-600); }
+    .history-badge.quiz { background: #EEF2FF; color: var(--primary); }
+    .history-badge.module { background: #ECFDF5; color: #10B981; }
+    .history-date { font-size: 0.7rem; color: var(--gray-600); display: flex; align-items: center; gap: 0.25rem; }
+    .history-points { font-weight: 700; font-size: 1.1rem; color: #10B981; display: flex; align-items: center; gap: 0.25rem; }
+    
+    /* Empty State */
+    .empty-state { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); }
+    .empty-state i { font-size: 3rem; color: var(--gray-600); margin-bottom: 1rem; display: block; }
+    .empty-state h3 { margin-bottom: 0.5rem; }
+    .empty-state p { color: var(--gray-600); }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .stats-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+      .points-summary { flex-direction: column; text-align: center; gap: 1rem; }
+      .history-item { flex-direction: column; text-align: center; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>⭐ Riwayat Poin</h1>
+      <p>Lihat semua poin yang telah kamu kumpulkan</p>
+    </div>
+    
+    <div class="tabs">
+      <a href="pencapaian-badge.html" class="tab">🏅 Badge</a>
+      <a href="pencapaian-sertifikat.html" class="tab">📜 Sertifikat</a>
+      <a href="pencapaian-poin.html" class="tab active">⭐ Poin</a>
+    </div>
+    
+    <div id="pointsContent"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  let totalPoints = currentUser.points || 0;
+  
+  // Ambil riwayat dari quizHistory
+  let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+  let userQuizHistory = quizHistory.filter(h => h.userEmail === currentUser.email);
+  
+  // Ambil riwayat modul (simulasi)
+  let moduleHistory = JSON.parse(localStorage.getItem('moduleHistory')) || [];
+  let userModuleHistory = moduleHistory.filter(h => h.userEmail === currentUser.email);
+  
+  // Gabungkan semua riwayat
+  let allHistory = [];
+  
+  userQuizHistory.forEach(q => {
+    allHistory.push({
+      title: q.quizTitle,
+      type: 'quiz',
+      points: q.pointsEarned || 0,
+      date: q.date || new Date().toISOString().split('T')[0],
+      score: q.score,
+      total: q.totalQuestions
+    });
+  });
+  
+  userModuleHistory.forEach(m => {
+    allHistory.push({
+      title: m.moduleTitle,
+      type: 'module',
+      points: m.pointsEarned || 0,
+      date: m.date || new Date().toISOString().split('T')[0]
+    });
+  });
+  
+  // Jika kosong, beri data dummy untuk demo
+  if (allHistory.length === 0) {
+    allHistory = [
+      { title: "Belajar Membaca: Huruf dan Suku Kata", type: "module", points: 60, date: "2024-02-15" },
+      { title: "Kuis Membaca Pemahaman", type: "quiz", points: 85, date: "2024-02-14", score: 8, total: 10 },
+      { title: "Menulis Huruf Tegak Bersambung", type: "module", points: 65, date: "2024-02-10" },
+      { title: "Kuis Operasi Hitung Dasar", type: "quiz", points: 90, date: "2024-02-08", score: 9, total: 10 }
+    ];
+  }
+  
+  // Urutkan dari terbaru
+  allHistory.sort((a,b) => new Date(b.date) - new Date(a.date));
+  
+  // Hitung statistik
+  let totalQuizPoints = userQuizHistory.reduce((sum, q) => sum + (q.pointsEarned || 0), 0);
+  let totalModulePoints = userModuleHistory.reduce((sum, m) => sum + (m.pointsEarned || 0), 0);
+  
+  // Jika pakai dummy, hitung ulang
+  if (userQuizHistory.length === 0 && userModuleHistory.length === 0) {
+    totalQuizPoints = allHistory.filter(h => h.type === 'quiz').reduce((sum, h) => sum + h.points, 0);
+    totalModulePoints = allHistory.filter(h => h.type === 'module').reduce((sum, h) => sum + h.points, 0);
+  }
+  
+  function formatDate(dateStr) {
+    if (!dateStr) return "Belum tersedia";
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+    const [year, month, day] = dateStr.split('-');
+    return `${day} ${months[parseInt(month)-1]} ${year}`;
+  }
+  
+  function renderHistory(filter = 'all') {
+    let filtered = allHistory;
+    if (filter === 'quiz') {
+      filtered = allHistory.filter(h => h.type === 'quiz');
+    } else if (filter === 'module') {
+      filtered = allHistory.filter(h => h.type === 'module');
+    }
+    
+    let html = `
+      <div class="points-summary">
+        <div class="points-info">
+          <div class="label">Total Poin Terkumpul</div>
+          <div class="total">${totalPoints}</div>
+          <div class="sub">✨ Terus semangat belajar!</div>
+        </div>
+        <div class="points-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="value">${totalQuizPoints}</div>
+          <div class="label">Dari Kuis</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">${totalModulePoints}</div>
+          <div class="label">Dari Modul</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">${allHistory.length}</div>
+          <div class="label">Total Transaksi</div>
+        </div>
+      </div>
+      
+      <div class="filter-bar">
+        <div class="filter-stats">
+          <i class="fas fa-list"></i> Menampilkan ${filtered.length} riwayat
+        </div>
+        <div>
+          <select id="typeFilter" class="filter-select">
+            <option value="all" ${filter === 'all' ? 'selected' : ''}>Semua</option>
+            <option value="quiz" ${filter === 'quiz' ? 'selected' : ''}>📝 Dari Kuis</option>
+            <option value="module" ${filter === 'module' ? 'selected' : ''}>📚 Dari Modul</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="history-list">
+    `;
+    
+    if (filtered.length === 0) {
+      html += `
+        <div class="empty-state">
+          <i class="fas fa-coins"></i>
+          <h3>Belum Ada Riwayat</h3>
+          <p>Kerjakan kuis dan modul untuk mengumpulkan poin</p>
+        </div>
+      `;
+    } else {
+      filtered.forEach(h => {
+        const badgeClass = h.type === 'quiz' ? 'quiz' : 'module';
+        const badgeIcon = h.type === 'quiz' ? '📝' : '📚';
+        const badgeText = h.type === 'quiz' ? 'Kuis' : 'Modul';
+        const scoreInfo = h.score ? ` (${h.score}/${h.total})` : '';
+        
+        html += `
+          <div class="history-item">
+            <div class="history-info">
+              <div class="history-title">
+                ${badgeIcon} ${h.title}${scoreInfo}
+                <span class="history-badge ${badgeClass}">${badgeText}</span>
+              </div>
+              <div class="history-date">
+                <i class="far fa-calendar-alt"></i> ${formatDate(h.date)}
+              </div>
+            </div>
+            <div class="history-points">
+              <i class="fas fa-plus-circle"></i> +${h.points} poin
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    html += `</div>`;
+    document.getElementById('pointsContent').innerHTML = html;
+    
+    // Event listener untuk filter
+    document.getElementById('typeFilter')?.addEventListener('change', (e) => {
+      renderHistory(e.target.value);
+    });
+  }
+  
+  renderHistory('all');
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li class="active"><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

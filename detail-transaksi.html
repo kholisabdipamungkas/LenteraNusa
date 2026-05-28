@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Detail Transaksi | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { --primary:#5B21B6; --secondary:#2563EB; --gray-200:#E2E8F0; --gray-600:#475569; --border-radius-card:20px; }
+    .container { max-width: 600px; margin: 0 auto; padding: 2rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    .detail-card { background: white; border-radius: var(--border-radius-card); padding: 1.5rem; border: 1px solid var(--gray-200); margin-bottom: 1rem; }
+    .detail-card h2 { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .info-row { display: flex; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200); }
+    .info-label { width: 120px; font-weight: 600; color: var(--gray-600); }
+    .info-value { flex: 1; }
+    .status-selesai { color: #10B981; font-weight: 600; }
+    .product-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200); }
+    .product-item:last-child { border-bottom: none; }
+    .btn-back { background: var(--primary); color: white; padding: 0.6rem 1.5rem; border-radius: 40px; text-decoration: none; display: inline-block; margin-top: 1rem; }
+    @media (max-width:768px) {
+      .container { padding: 1rem; }
+      .info-row { flex-direction: column; gap: 0.25rem; }
+      .info-label { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="riwayat-transaksi.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Riwayat</a>
+  <div id="detailContent"></div>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const transId = urlParams.get('id');
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  let trans = transactions.find(t => t.id === transId);
+  
+  if (!trans) {
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-card" style="text-align: center;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #F59E0B;"></i>
+        <h2>Transaksi Tidak Ditemukan</h2>
+        <a href="riwayat-transaksi.html" class="btn-back">Kembali ke Riwayat</a>
+      </div>
+    `;
+  } else {
+    let productsHtml = '';
+    if (trans.products && trans.products.length > 0) {
+      trans.products.forEach(p => {
+        let productName = typeof p === 'string' ? p : p.name;
+        let productPrice = typeof p === 'string' ? '-' : (p.price || '-');
+        productsHtml += `<div class="product-item"><span>${productName}</span><span>${productPrice !== '-' ? '⭐ ' + productPrice : ''}</span></div>`;
+      });
+    }
+    
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-card">
+        <h2><i class="fas fa-receipt"></i> Detail Transaksi</h2>
+        <div class="info-row">
+          <div class="info-label">ID Transaksi</div>
+          <div class="info-value">${trans.id}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Tanggal</div>
+          <div class="info-value">${trans.date}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Total Poin</div>
+          <div class="info-value">⭐ ${trans.totalPoints}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Status</div>
+          <div class="info-value"><span class="status-selesai"><i class="fas fa-check-circle"></i> ${trans.status || 'Selesai'}</span></div>
+        </div>
+      </div>
+      
+      ${productsHtml ? `
+      <div class="detail-card">
+        <h2><i class="fas fa-box"></i> Produk yang Dibeli</h2>
+        ${productsHtml}
+      </div>
+      ` : ''}
+      
+      <div class="detail-card">
+        <h2><i class="fas fa-user"></i> Informasi Penerima</h2>
+        <div class="info-row">
+          <div class="info-label">Nama</div>
+          <div class="info-value">${trans.userName || currentUser.name}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Email</div>
+          <div class="info-value">${currentUser.email}</div>
+        </div>
+      </div>
+      
+      <a href="riwayat-transaksi.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Riwayat</a>
+    `;
+  }
+</script>
+</body>
+</html>

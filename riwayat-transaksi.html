@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Riwayat Transaksi | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { --primary:#5B21B6; --secondary:#2563EB; --gray-200:#E2E8F0; --gray-600:#475569; --border-radius-card:20px; }
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    .stats-card { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--border-radius-card); padding: 1.5rem; color: white; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .stats-card .total { font-size: 2rem; font-weight: 800; }
+    .transaction-card { background: white; border-radius: var(--border-radius-card); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; transition: 0.2s; }
+    .transaction-card:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .transaction-info h4 { margin-bottom: 0.25rem; }
+    .transaction-info p { font-size: 0.7rem; color: var(--gray-600); }
+    .transaction-points { font-weight: 700; color: var(--primary); }
+    .btn-detail { background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; font-size: 0.75rem; font-weight: 500; transition: 0.2s; }
+    .btn-detail:hover { transform: scale(1.05); }
+    .empty-state { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); }
+    .empty-state i { font-size: 3rem; color: var(--gray-600); margin-bottom: 1rem; display: block; }
+    @media (max-width:768px) {
+      .container { padding: 1rem; }
+      .stats-card { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="toko-hadiah.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Toko</a>
+  
+  <div class="page-header">
+    <h1>📜 Riwayat Transaksi</h1>
+    <p>Lihat semua transaksi yang telah kamu lakukan</p>
+  </div>
+  
+  <div id="statsCard"></div>
+  <div id="transactionList"></div>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  let userTransactions = transactions.filter(t => t.userId === currentUser.email || t.userName === currentUser.name);
+  
+  // Statistik
+  let totalTransactions = userTransactions.length;
+  let totalSpent = userTransactions.reduce((sum, t) => sum + (t.totalPoints || 0), 0);
+  
+  document.getElementById('statsCard').innerHTML = `
+    <div class="stats-card">
+      <div>
+        <div class="total">${totalTransactions}</div>
+        <div style="font-size: 0.875rem;">Total Transaksi</div>
+      </div>
+      <div>
+        <div class="total">⭐ ${totalSpent}</div>
+        <div style="font-size: 0.875rem;">Total Poin Terpakai</div>
+      </div>
+    </div>
+  `;
+  
+  let html = '';
+  if (userTransactions.length === 0) {
+    html = `
+      <div class="empty-state">
+        <i class="fas fa-receipt"></i>
+        <h3>Belum Ada Transaksi</h3>
+        <p>Belum ada transaksi yang dilakukan</p>
+        <a href="toko-hadiah.html" class="btn-detail" style="display: inline-block;">Belanja Sekarang</a>
+      </div>
+    `;
+  } else {
+    userTransactions.reverse().forEach(t => {
+      html += `
+        <div class="transaction-card">
+          <div class="transaction-info">
+            <h4><i class="fas fa-receipt"></i> ${t.id}</h4>
+            <p><i class="far fa-calendar-alt"></i> ${t.date}</p>
+          </div>
+          <div class="transaction-points">⭐ ${t.totalPoints} poin</div>
+          <a href="detail-transaksi.html?id=${t.id}" class="btn-detail">Detail</a>
+        </div>
+      `;
+    });
+  }
+  document.getElementById('transactionList').innerHTML = html;
+</script>
+</body>
+</html>

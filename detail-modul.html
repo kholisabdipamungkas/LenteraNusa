@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Detail Modul | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95;
+      --primary-light:#7C3AED;
+      --secondary:#2563EB; 
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    
+    /* Layout */
+    .app { display: flex; min-height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar { 
+      width:280px; 
+      background:var(--card-bg); 
+      border-right:1px solid var(--gray-200); 
+      position:fixed; 
+      top:0; bottom:0; left:0; 
+      z-index:50; 
+      transition:transform 0.2s ease; 
+      overflow-y:auto; 
+      padding:1.5rem; 
+    }
+    
+    .sidebar-header { 
+      display:flex; 
+      align-items:center; 
+      gap:0.75rem; 
+      margin-bottom:2rem; 
+      padding-bottom:1rem; 
+      border-bottom:1px solid var(--gray-200); 
+    }
+    
+    .logo-icon { 
+      background:linear-gradient(135deg,var(--primary),var(--secondary)); 
+      width:36px; height:36px; 
+      border-radius:12px; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      color:white; 
+    }
+    
+    .logo-text { 
+      font-family:'Poppins'; 
+      font-weight:700; 
+      font-size:1.25rem;
+      background:linear-gradient(135deg,var(--primary),var(--secondary)); 
+      -webkit-background-clip:text; 
+      background-clip:text; 
+      color:transparent; 
+    }
+    
+    .sidebar-menu { 
+      list-style:none; 
+      margin-top:1rem;
+    }
+    
+    .sidebar-menu li { 
+      margin-bottom:0.25rem; 
+    }
+    
+    .sidebar-menu a { 
+      display:flex; 
+      align-items:center; 
+      gap:0.75rem; 
+      padding:0.75rem 1rem; 
+      border-radius:12px; 
+      color:var(--gray-600); 
+      font-weight:500; 
+      text-decoration:none; 
+      transition:all 0.2s;
+    }
+    
+    .sidebar-menu a:hover { 
+      background:var(--gray-100); 
+      color:var(--primary); 
+    }
+    
+    .sidebar-menu .active a { 
+      background:#EEF2FF; 
+      color:var(--primary); 
+    }
+    
+    .sidebar-menu i { 
+      width:1.25rem; 
+    }
+    
+    /* Main Content */
+    .main-content { 
+      flex:1; 
+      margin-left:280px; 
+      padding:2rem; 
+    }
+    
+    /* Breadcrumb */
+    .breadcrumb {
+      margin-bottom:1.5rem;
+      font-size:0.875rem;
+      color:var(--gray-600);
+    }
+    
+    .breadcrumb a {
+      color:var(--primary);
+      text-decoration:none;
+    }
+    
+    .breadcrumb a:hover {
+      text-decoration:underline;
+    }
+    
+    /* Detail Card */
+    .detail-card {
+      background:white;
+      border-radius:var(--border-radius-card);
+      padding:2rem;
+      margin-bottom:1.5rem;
+      border:1px solid var(--gray-200);
+      transition:box-shadow 0.2s;
+    }
+    
+    .detail-card:hover {
+      box-shadow:var(--shadow-md);
+    }
+    
+    .module-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      gap:1rem;
+      margin-bottom:1rem;
+    }
+    
+    .category-badge {
+      display:inline-block;
+      padding:0.25rem 0.75rem;
+      border-radius:20px;
+      font-size:0.7rem;
+      font-weight:600;
+    }
+    
+    .category-membaca { background:#EFF6FF; color:#2563EB; }
+    .category-menulis { background:#FEF3C7; color:#D97706; }
+    .category-berhitung { background:#ECFDF5; color:#10B981; }
+    
+    .module-stats {
+      display:flex;
+      gap:1.5rem;
+      flex-wrap:wrap;
+      margin:1rem 0;
+      padding:1rem 0;
+      border-top:1px solid var(--gray-200);
+      border-bottom:1px solid var(--gray-200);
+    }
+    
+    .stat-item {
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      color:var(--gray-600);
+      font-size:0.875rem;
+    }
+    
+    .stat-item i {
+      font-size:1rem;
+      color:var(--primary);
+    }
+    
+    .progress-wrapper {
+      margin:1rem 0;
+    }
+    
+    .progress-label {
+      display:flex;
+      justify-content:space-between;
+      font-size:0.8rem;
+      color:var(--gray-600);
+      margin-bottom:0.5rem;
+    }
+    
+    .progress-bar {
+      background:var(--gray-200);
+      border-radius:12px;
+      height:8px;
+      overflow:hidden;
+    }
+    
+    .progress-fill {
+      background:linear-gradient(90deg,var(--primary),var(--secondary));
+      height:100%;
+      border-radius:12px;
+      transition:width 0.3s;
+    }
+    
+    .btn-primary {
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:white;
+      padding:0.75rem 1.5rem;
+      border-radius:40px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      font-weight:600;
+      transition:all 0.2s;
+      border:none;
+      cursor:pointer;
+    }
+    
+    .btn-primary:hover {
+      transform:scale(1.02);
+      box-shadow:0 4px 12px rgba(91,33,182,0.3);
+    }
+    
+    /* Tujuan List */
+    .goals-list {
+      list-style:none;
+      margin-top:1rem;
+    }
+    
+    .goals-list li {
+      padding:0.5rem 0;
+      display:flex;
+      align-items:center;
+      gap:0.75rem;
+    }
+    
+    .goals-list li i {
+      color:#10B981;
+      font-size:1rem;
+    }
+    
+    /* Lesson List */
+    .lesson-list {
+      display:flex;
+      flex-direction:column;
+      gap:0.5rem;
+      margin-top:1rem;
+    }
+    
+    .lesson-item {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:1rem;
+      background:var(--gray-100);
+      border-radius:12px;
+      transition:all 0.2s;
+    }
+    
+    .lesson-item:hover {
+      background:#E8EDF5;
+    }
+    
+    .lesson-info {
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      flex:1;
+    }
+    
+    .lesson-number {
+      width:32px;
+      height:32px;
+      background:white;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      font-size:0.875rem;
+      color:var(--primary);
+    }
+    
+    .lesson-title {
+      font-weight:500;
+    }
+    
+    .lesson-duration {
+      font-size:0.75rem;
+      color:var(--gray-600);
+    }
+    
+    .lesson-status {
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+    }
+    
+    .status-completed { color:#10B981; }
+    .status-inprogress { color:var(--primary); }
+    .status-locked { color:var(--gray-600); }
+    
+    .btn-lesson {
+      padding:0.25rem 0.75rem;
+      border-radius:20px;
+      background:white;
+      color:var(--primary);
+      text-decoration:none;
+      font-size:0.75rem;
+      font-weight:500;
+    }
+    
+    /* Back Button */
+    .back-button {
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      color:var(--gray-600);
+      text-decoration:none;
+      margin-bottom:1rem;
+      font-size:0.875rem;
+    }
+    
+    .back-button:hover {
+      color:var(--primary);
+    }
+    
+    /* Mobile */
+    .hamburger {
+      display:none;
+      position:fixed;
+      top:1rem;
+      left:1rem;
+      z-index:60;
+      background:white;
+      border:none;
+      font-size:1.5rem;
+      padding:0.5rem;
+      border-radius:12px;
+      cursor:pointer;
+      box-shadow:var(--shadow-sm);
+    }
+    
+    @media (max-width:768px) {
+      .sidebar {
+        transform:translateX(-100%);
+        width:260px;
+      }
+      .sidebar.open {
+        transform:translateX(0);
+      }
+      .main-content {
+        margin-left:0;
+        padding:1.5rem;
+        padding-top:4rem;
+      }
+      .hamburger {
+        display:block;
+      }
+      .module-header {
+        flex-direction:column;
+      }
+      .module-stats {
+        flex-direction:column;
+        gap:0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content" id="mainContent"></main>
+</div>
+
+<script>
+  // Cek login
+  if(!JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(localStorage.getItem('currentUser')).role !== 'siswa') {
+    window.location='login.html';
+  }
+  
+  // Data modul (ambil dari localStorage)
+  let modules = JSON.parse(localStorage.getItem('modules')) || [];
+  
+  // Jika modules kosong, buat data default
+  if (modules.length === 0) {
+    modules = [
+      { id: 1, title: "Belajar Membaca: Huruf dan Suku Kata", category: "Membaca", duration: "25", points: 60, level: "SD", description: "Belajar mengenal huruf, suku kata, dan membaca kata sederhana dengan metode yang menyenangkan." },
+      { id: 2, title: "Menulis Huruf Tegak Bersambung", category: "Menulis", duration: "30", points: 65, level: "SD", description: "Latihan menulis huruf tegak bersambung yang rapi dan benar untuk meningkatkan kemampuan menulis." }
+    ];
+    localStorage.setItem('modules', JSON.stringify(modules));
+  }
+  
+  // Ambil ID dari URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const moduleId = parseInt(urlParams.get('id'));
+  const module = modules.find(m => m.id === moduleId);
+  
+  function getCategoryClass(category) {
+    if (category === "Membaca") return "category-membaca";
+    if (category === "Menulis") return "category-menulis";
+    if (category === "Berhitung") return "category-berhitung";
+    return "";
+  }
+  
+  function getCategoryIcon(category) {
+    if (category === "Membaca") return "📖";
+    if (category === "Menulis") return "✏️";
+    if (category === "Berhitung") return "🔢";
+    return "📚";
+  }
+  
+  // Simulasi data pelajaran berdasarkan modul
+  function getLessons(moduleTitle, moduleCategory) {
+    let lessons = [];
+    
+    if (moduleCategory === "Membaca") {
+      lessons = [
+        { title: "Pengenalan Teks Bacaan", duration: "5", status: "completed" },
+        { title: "Teknik Membaca Cepat", duration: "8", status: "completed" },
+        { title: "Menemukan Ide Pokok", duration: "7", status: "inprogress" },
+        { title: "Memahami Isi Bacaan", duration: "6", status: "locked" },
+        { title: "Latihan Soal Pemahaman", duration: "10", status: "locked" }
+      ];
+    } else if (moduleCategory === "Menulis") {
+      lessons = [
+        { title: "Dasar-dasar Menulis", duration: "5", status: "completed" },
+        { title: "Struktur Kalimat", duration: "8", status: "completed" },
+        { title: "Menulis Paragraf", duration: "7", status: "inprogress" },
+        { title: "Mengembangkan Ide", duration: "6", status: "locked" },
+        { title: "Latihan Menulis", duration: "10", status: "locked" }
+      ];
+    } else {
+      lessons = [
+        { title: "Pengertian Bilangan", duration: "5", status: "completed" },
+        { title: "Operasi Hitung Dasar", duration: "8", status: "completed" },
+        { title: "Penjumlahan & Pengurangan", duration: "7", status: "inprogress" },
+        { title: "Perkalian & Pembagian", duration: "6", status: "locked" },
+        { title: "Latihan Soal", duration: "10", status: "locked" }
+      ];
+    }
+    
+    return lessons;
+  }
+  
+  // Simulasi tujuan pembelajaran
+  function getGoals(category) {
+    if (category === "Membaca") {
+      return [
+        "Memahami isi bacaan dengan baik",
+        "Menemukan ide pokok setiap paragraf",
+        "Meningkatkan kecepatan membaca",
+        "Memperluas kosa kata"
+      ];
+    } else if (category === "Menulis") {
+      return [
+        "Menulis dengan struktur yang benar",
+        "Mengembangkan ide secara sistematis",
+        "Menggunakan ejaan yang tepat",
+        "Menyusun paragraf yang koheren"
+      ];
+    } else {
+      return [
+        "Memahami operasi hitung dasar",
+        "Menyelesaikan soal cerita",
+        "Meningkatkan kecepatan berhitung",
+        "Mengaplikasikan dalam kehidupan sehari-hari"
+      ];
+    }
+  }
+  
+  // Hitung progress
+  function calculateProgress(lessons) {
+    let completed = lessons.filter(l => l.status === "completed").length;
+    let inprogress = lessons.filter(l => l.status === "inprogress").length;
+    let total = lessons.length;
+    let progress = Math.round(((completed + (inprogress > 0 ? 0.5 : 0)) / total) * 100);
+    return { completed, total, progress };
+  }
+  
+  if (!module) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="detail-card" style="text-align:center;">
+        <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:#D97706;"></i>
+        <h2 style="margin:1rem 0;">Modul Tidak Ditemukan</h2>
+        <p>Modul yang Anda cari tidak tersedia.</p>
+        <a href="modul.html" class="btn-primary" style="margin-top:1rem;">Kembali ke Modul</a>
+      </div>
+    `;
+  } else {
+    const lessons = getLessons(module.title, module.category);
+    const goals = getGoals(module.category);
+    const progressData = calculateProgress(lessons);
+    
+    // Render lesson list HTML
+    let lessonsHtml = '';
+    lessons.forEach((lesson, idx) => {
+      let statusIcon = '';
+      let statusClass = '';
+      let actionButton = '';
+      
+      if (lesson.status === "completed") {
+        statusIcon = '<i class="fas fa-check-circle status-completed"></i>';
+        actionButton = '<span class="btn-lesson" style="background:#10B98110; color:#10B981;"><i class="fas fa-redo-alt"></i> Ulangi</span>';
+      } else if (lesson.status === "inprogress") {
+        statusIcon = '<i class="fas fa-play-circle status-inprogress"></i>';
+        actionButton = '<a href="#" class="btn-lesson" style="background:var(--primary); color:white;"><i class="fas fa-play"></i> Lanjutkan</a>';
+      } else {
+        statusIcon = '<i class="fas fa-lock status-locked"></i>';
+        actionButton = '<span class="btn-lesson" style="background:#CBD5E1; color:#64748B; cursor:not-allowed;"><i class="fas fa-lock"></i> Terkunci</span>';
+      }
+      
+      lessonsHtml += `
+        <div class="lesson-item">
+          <div class="lesson-info">
+            <div class="lesson-number">${String(idx+1).padStart(2,'0')}</div>
+            <div>
+              <div class="lesson-title">${lesson.title}</div>
+              <div class="lesson-duration"><i class="far fa-clock"></i> ${lesson.duration} menit</div>
+            </div>
+          </div>
+          <div class="lesson-status">
+            ${actionButton}
+          </div>
+        </div>
+      `;
+    });
+    
+    document.getElementById('mainContent').innerHTML = `
+      <a href="modul.html" class="back-button"><i class="fas fa-arrow-left"></i> Kembali ke Modul</a>
+      
+      <!-- Detail Modul -->
+      <div class="detail-card">
+        <div class="module-header">
+          <div>
+            <div class="category-badge ${getCategoryClass(module.category)}">
+              ${getCategoryIcon(module.category)} ${module.category}
+            </div>
+            <h1 style="margin:0.75rem 0 0.5rem;">${module.title}</h1>
+          </div>
+        </div>
+        <p style="color:var(--gray-600); line-height:1.6;">${module.description}</p>
+        
+        <div class="module-stats">
+          <div class="stat-item"><i class="fas fa-clock"></i> ${module.duration} menit</div>
+          <div class="stat-item"><i class="fas fa-star"></i> ${module.points} poin</div>
+          <div class="stat-item"><i class="fas fa-graduation-cap"></i> Level ${module.level}</div>
+          <div class="stat-item"><i class="fas fa-list"></i> ${lessons.length} pelajaran</div>
+        </div>
+        
+        <div class="progress-wrapper">
+          <div class="progress-label">
+            <span>Progress Belajar</span>
+            <span>${progressData.completed}/${progressData.total} selesai (${progressData.progress}%)</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progressData.progress}%;"></div>
+          </div>
+        </div>
+        
+        <a href="#" class="btn-primary" id="continueBtn">
+          <i class="fas fa-play"></i> Lanjutkan Belajar
+        </a>
+      </div>
+      
+      <!-- Tujuan Pembelajaran -->
+      <div class="detail-card">
+        <h3><i class="fas fa-bullseye" style="color:var(--primary); margin-right:0.5rem;"></i> Tujuan Pembelajaran</h3>
+        <ul class="goals-list">
+          ${goals.map(goal => `<li><i class="fas fa-check-circle"></i> ${goal}</li>`).join('')}
+        </ul>
+      </div>
+      
+      <!-- Daftar Pelajaran -->
+      <div class="detail-card">
+        <h3><i class="fas fa-book" style="color:var(--primary); margin-right:0.5rem;"></i> Daftar Pelajaran</h3>
+        <div class="lesson-list">
+          ${lessonsHtml}
+        </div>
+      </div>
+    `;
+    
+    // Event untuk tombol lanjutkan belajar
+    document.getElementById('continueBtn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert(`📖 Memulai modul: ${module.title}\n\nSelamat belajar! ✨`);
+    });
+  }
+  
+  // Sidebar HTML
+  const sidebarHtml = `
+    <div class="sidebar-header">
+      <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+      <div class="logo-text">LenteraNusa</div>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li class="active"><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn2"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  
+  // Logout
+  document.getElementById('logoutBtn2')?.addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    window.location = 'login.html';
+  });
+  
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  
+  // Tutup sidebar saat klik di luar (mobile)
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+</script>
+</body>
+</html>

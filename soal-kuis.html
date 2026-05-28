@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kerjakan Kuis | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9; 
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    .quiz-container { max-width: 800px; margin:0 auto; }
+    .quiz-header { margin-bottom: 1.5rem; }
+    .quiz-header h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .quiz-meta { color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .category-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+    .category-membaca { background:#EFF6FF; color:#2563EB; }
+    .category-menulis { background:#FEF3C7; color:#D97706; }
+    .category-berhitung { background:#ECFDF5; color:#10B981; }
+    .progress-bar { background: var(--gray-200); border-radius: 20px; height: 10px; margin: 1rem 0; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; height: 100%; border-radius: 20px; transition: width 0.3s ease; }
+    .question-card { background: white; border-radius: var(--border-radius-card); padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); transition: 0.2s; }
+    .question-number { font-size: 0.875rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem; }
+    .question-text { font-weight: 700; margin-bottom: 1.5rem; font-size: 1.2rem; line-height: 1.5; }
+    .options { display: flex; flex-direction: column; gap: 0.75rem; margin: 1.5rem 0; }
+    .option { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border-radius: 16px; background: var(--gray-100); cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+    .option:hover { background: #E8EDF5; transform: translateX(4px); }
+    .option.selected { background: #EEF2FF; border-color: var(--primary); }
+    .option input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+    .option label { flex: 1; cursor: pointer; font-weight: 500; }
+    .option-letter { font-weight: 700; color: var(--primary); width: 28px; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; gap: 1rem; }
+    .btn-nav, .btn-submit { background: var(--primary); color: white; border: none; padding: 0.875rem 1.75rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem; font-size: 1rem; }
+    .btn-nav:hover, .btn-submit:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-nav:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-nav-secondary { background: var(--gray-200); color: var(--gray-800); }
+    .btn-nav-secondary:hover { background: var(--gray-200); box-shadow: none; }
+    .question-indicator { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; justify-content: center; }
+    .indicator-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .indicator-dot.answered { background: var(--primary); color: white; }
+    .indicator-dot.current { background: var(--secondary); color: white; transform: scale(1.1); }
+    .indicator-dot:hover { transform: scale(1.05); }
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .question-card { padding: 1.5rem; }
+      .question-text { font-size: 1rem; }
+      .nav-buttons { flex-wrap: wrap; }
+      .btn-nav, .btn-submit { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="quiz-container" id="quizContainer"></div>
+  </main>
+</div>
+<script>
+  // Cek login
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const quizId = parseInt(urlParams.get('id'));
+  const quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+  const quiz = quizzes.find(q => q.id === quizId);
+  
+  function getCategoryClass(category) {
+    if (category === 'Membaca') return 'category-membaca';
+    if (category === 'Menulis') return 'category-menulis';
+    if (category === 'Berhitung') return 'category-berhitung';
+    return '';
+  }
+  
+  function getCategoryIcon(category) {
+    if (category === 'Membaca') return '📖';
+    if (category === 'Menulis') return '✏️';
+    if (category === 'Berhitung') return '🔢';
+    return '📚';
+  }
+  
+  if (!quiz) {
+    document.getElementById('quizContainer').innerHTML = `
+      <div class="question-card" style="text-align:center;">
+        <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:#D97706;"></i>
+        <h3 style="margin:1rem 0;">Kuis Tidak Ditemukan</h3>
+        <a href="paket-kuis.html" class="btn-nav" style="display:inline-flex;"><i class="fas fa-arrow-left"></i> Kembali</a>
+      </div>
+    `;
+  } else {
+    // Soal berdasarkan kategori
+    let questions = [];
+    if (quiz.category === 'Membaca') {
+      questions = [
+        { text: "Apa ide pokok dari paragraf 'Membaca adalah jendela dunia'?", options: ["Membaca menyenangkan", "Membaca menambah wawasan", "Membaca membuka wawasan dunia", "Membaca membuang waktu"], correct: 2 },
+        { text: "Apa manfaat utama membaca?", options: ["Menambah teman", "Menambah pengetahuan dan wawasan", "Membosankan", "Membuang waktu"], correct: 1 },
+        { text: "Apa yang dimaksud dengan skimming?", options: ["Membaca kata per kata", "Membaca cepat untuk gambaran umum", "Membaca nyaring", "Membaca dengan jari"], correct: 1 },
+        { text: "Tokoh utama dalam cerita 'Malin Kundang' adalah?", options: ["Malin Kundang", "Ibu Malin", "Putri raja", "Nelayan"], correct: 0 },
+        { text: "Latar tempat dalam cerita 'Timun Mas' adalah?", options: ["Hutan", "Istana", "Laut", "Gunung"], correct: 0 },
+        { text: "Apa pesan moral dari cerita 'Kancil dan Buaya'?", options: ["Jangan sombong", "Jangan malas", "Kecerdikan mengalahkan kekuatan", "Harus jujur"], correct: 2 },
+        { text: "Apa yang dimaksud dengan membaca pemahaman?", options: ["Membaca cepat", "Memahami isi bacaan", "Menghafal teks", "Membaca nyaring"], correct: 1 }
+      ];
+    } else if (quiz.category === 'Menulis') {
+      questions = [
+        { text: "Struktur kalimat yang benar dalam bahasa Indonesia adalah?", options: ["SPOK", "SKOP", "OPSK", "PSKO"], correct: 0 },
+        { text: "Apa yang dimaksud dengan paragraf?", options: ["Kumpulan kalimat yang padu", "Satu kalimat saja", "Kumpulan kata acak", "Kumpulan huruf"], correct: 0 },
+        { text: "Huruf kapital digunakan pada awal?", options: ["Kalimat", "Setiap kata", "Nama orang", "A dan C benar"], correct: 3 },
+        { text: "Sinonim dari kata 'ceria' adalah?", options: ["Sedih", "Gembira", "Marah", "Bingung"], correct: 1 },
+        { text: "Ejaan yang benar: 'Saya sedang ... buku cerita'", options: ["membaca", "membasa", "membacha", "membatja"], correct: 0 },
+        { text: "Apa itu paragraf induktif?", options: ["Pikiran utama di awal", "Pikiran utama di akhir", "Pikiran utama di tengah", "Tidak memiliki pikiran utama"], correct: 1 },
+        { text: "Kata baku dari 'aktifitas' adalah?", options: ["Aktifitas", "Aktivitas", "Aktif", "Aktiv"], correct: 1 }
+      ];
+    } else {
+      questions = [
+        { text: "25 + 17 = ?", options: ["42", "32", "40", "52"], correct: 0 },
+        { text: "100 - 45 = ?", options: ["55", "65", "45", "35"], correct: 0 },
+        { text: "8 × 7 = ?", options: ["48", "56", "64", "49"], correct: 1 },
+        { text: "81 ÷ 9 = ?", options: ["7", "8", "9", "10"], correct: 2 },
+        { text: "Hasil dari 15 + 6 - 3 = ?", options: ["18", "17", "19", "20"], correct: 0 },
+        { text: "12 × 12 = ?", options: ["124", "144", "134", "154"], correct: 1 },
+        { text: "100 ÷ 4 = ?", options: ["20", "25", "30", "35"], correct: 1 }
+      ];
+    }
+    // Potong sesuai totalSoal
+    questions = questions.slice(0, Math.min(quiz.totalSoal || 5, questions.length));
+    
+    let currentIndex = 0;
+    let answers = new Array(questions.length).fill(null);
+    let quizContainer = document.getElementById('quizContainer');
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      const optionLetters = ['A', 'B', 'C', 'D'];
+      let optionsHtml = '';
+      q.options.forEach((opt, idx) => {
+        const isSelected = answers[currentIndex] === idx;
+        const selectedClass = isSelected ? 'selected' : '';
+        optionsHtml += `
+          <div class="option ${selectedClass}" data-opt-index="${idx}">
+            <div class="option-letter">${optionLetters[idx]}</div>
+            <input type="radio" name="question" value="${idx}" id="opt_${idx}" ${isSelected ? 'checked' : ''}>
+            <label for="opt_${idx}">${opt}</label>
+          </div>
+        `;
+      });
+      
+      const progress = ((currentIndex + 1) / questions.length) * 100;
+      const answeredCount = answers.filter(a => a !== null).length;
+      
+      // Buat indicator dots
+      let indicatorHtml = '';
+      questions.forEach((_, idx) => {
+        let indicatorClass = '';
+        if (answers[idx] !== null) indicatorClass = 'answered';
+        if (idx === currentIndex) indicatorClass += ' current';
+        indicatorHtml += `<div class="indicator-dot ${indicatorClass}" data-index="${idx}">${idx + 1}</div>`;
+      });
+      
+      const html = `
+        <div class="quiz-header">
+          <h1><i class="fas fa-puzzle-piece"></i> ${quiz.title}</h1>
+          <div class="quiz-meta">
+            <span><span class="category-badge ${getCategoryClass(quiz.category)}">${getCategoryIcon(quiz.category)} ${quiz.category}</span></span>
+            <span><i class="fas fa-star"></i> ${quiz.points} poin</span>
+            <span><i class="fas fa-clock"></i> ${quiz.duration} menit</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%;"></div></div>
+          <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+            <span><i class="fas fa-check-circle"></i> Terjawab: ${answeredCount}/${questions.length}</span>
+            <span><i class="fas fa-question-circle"></i> Soal ${currentIndex+1}/${questions.length}</span>
+          </div>
+        </div>
+        
+        <div class="question-indicator">
+          ${indicatorHtml}
+        </div>
+        
+        <div class="question-card">
+          <div class="question-number">Pertanyaan ${currentIndex+1}</div>
+          <div class="question-text">${q.text}</div>
+          <div class="options" id="optionsContainer">${optionsHtml}</div>
+          <div class="nav-buttons">
+            <button class="btn-nav btn-nav-secondary" id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+            ${currentIndex === questions.length - 1 ? 
+              `<button class="btn-submit" id="submitBtn"><i class="fas fa-check-circle"></i> Selesai & Lihat Hasil</button>` : 
+              `<button class="btn-nav" id="nextBtn">Selanjutnya <i class="fas fa-arrow-right"></i></button>`
+            }
+          </div>
+        </div>
+      `;
+      quizContainer.innerHTML = html;
+      
+      // Event listeners untuk option
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          const radio = opt.querySelector('input');
+          if (radio) radio.checked = true;
+          const val = parseInt(radio.value);
+          answers[currentIndex] = val;
+          
+          // Update class selected
+          document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          
+          // Update indicator
+          updateIndicators();
+          
+          // Update progres jawaban
+          const answeredCountNew = answers.filter(a => a !== null).length;
+          document.querySelector('.quiz-header span:first-child').innerHTML = `<i class="fas fa-check-circle"></i> Terjawab: ${answeredCountNew}/${questions.length}`;
+        });
+        
+        const radio = opt.querySelector('input');
+        if (radio) {
+          radio.addEventListener('change', (e) => {
+            answers[currentIndex] = parseInt(e.target.value);
+            updateIndicators();
+          });
+        }
+      });
+      
+      // Event untuk indicator dots
+      document.querySelectorAll('.indicator-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          const index = parseInt(dot.dataset.index);
+          if (!isNaN(index)) {
+            currentIndex = index;
+            renderQuestion();
+          }
+        });
+      });
+      
+      document.getElementById('prevBtn')?.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderQuestion();
+        }
+      });
+      
+      document.getElementById('nextBtn')?.addEventListener('click', () => {
+        if (currentIndex < questions.length - 1) {
+          currentIndex++;
+          renderQuestion();
+        }
+      });
+      
+      document.getElementById('submitBtn')?.addEventListener('click', () => {
+        // Hitung skor
+        let score = 0;
+        questions.forEach((q, idx) => {
+          if (answers[idx] !== null && answers[idx] === q.correct) score++;
+        });
+        const totalPoints = (score / questions.length) * quiz.points;
+        
+        // Simpan ke localStorage
+        let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+        quizHistory.push({
+          quizId: quiz.id,
+          quizTitle: quiz.title,
+          userEmail: currentUser.email,
+          score: score,
+          totalQuestions: questions.length,
+          pointsEarned: Math.round(totalPoints),
+          date: new Date().toISOString().split('T')[0]
+        });
+        localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        
+        // Update poin user
+        let users = JSON.parse(localStorage.getItem('users'));
+        const userIndex = users.findIndex(u => u.email === currentUser.email);
+        if (userIndex !== -1) {
+          users[userIndex].points = (users[userIndex].points || 0) + Math.round(totalPoints);
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+        }
+        
+        window.location.href = `hasil-kuis.html?id=${quiz.id}&score=${score}&total=${questions.length}&points=${Math.round(totalPoints)}`;
+      });
+    }
+    
+    function updateIndicators() {
+      document.querySelectorAll('.indicator-dot').forEach((dot, idx) => {
+        dot.classList.remove('answered', 'current');
+        if (answers[idx] !== null) dot.classList.add('answered');
+        if (idx === currentIndex) dot.classList.add('current');
+      });
+    }
+    
+    renderQuestion();
+  }
+  
+  // Sidebar HTML
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li class="active"><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

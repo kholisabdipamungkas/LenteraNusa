@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Checkout | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none; margin-bottom: 1.5rem; transition: 0.2s; }
+    .back-link:hover { color: var(--primary); }
+    
+    .checkout-container { max-width: 800px; margin: 0 auto; }
+    .checkout-card { background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .checkout-card h3 { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .order-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200); }
+    .order-item:last-child { border-bottom: none; }
+    .order-total { display: flex; justify-content: space-between; padding-top: 1rem; margin-top: 0.5rem; border-top: 2px solid var(--gray-200); font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+    .points-deduction { background: #EEF2FF; border-radius: 16px; padding: 1rem; margin: 1rem 0; display: flex; justify-content: space-between; align-items: center; }
+    .btn-confirm { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 1rem; border-radius: 40px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+    .btn-confirm:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    .btn-cancel { background: var(--gray-100); color: var(--gray-600); border: none; padding: 0.75rem 1rem; border-radius: 40px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 0.75rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
+    .btn-cancel:hover { background: var(--gray-200); }
+    
+    .notification { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 12px; color: white; z-index: 1001; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .checkout-card { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <a href="keranjang.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Keranjang</a>
+    
+    <div class="page-header">
+      <h1>📋 Konfirmasi Checkout</h1>
+      <p>Pastikan pesananmu sudah benar sebelum melakukan checkout</p>
+    </div>
+    
+    <div class="checkout-container" id="checkoutContent"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let userPoints = currentUser.points || 0;
+  
+  if (cart.length === 0) {
+    window.location.href = 'toko-hadiah.html';
+  }
+  
+  function showNotification(message, isSuccess = true) {
+    const notif = document.createElement('div');
+    notif.className = 'notification';
+    notif.style.background = isSuccess ? '#10B981' : '#EF4444';
+    notif.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      notif.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notif.remove(), 300);
+    }, 3000);
+  }
+  
+  function renderCheckout() {
+    let totalPoints = cart.reduce((sum, item) => sum + item.price, 0);
+    let remainingPoints = userPoints - totalPoints;
+    
+    let itemsHtml = '';
+    cart.forEach((item) => {
+      itemsHtml += `
+        <div class="order-item">
+          <div>
+            <span style="font-size: 1.2rem; margin-right: 0.5rem;">${item.image || '🎁'}</span>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div style="font-size: 0.7rem; color: var(--gray-600);">${item.category || 'Produk'}</div>
+          </div>
+          <span>⭐ ${item.price} poin</span>
+        </div>
+      `;
+    });
+    
+    document.getElementById('checkoutContent').innerHTML = `
+      <div class="checkout-card">
+        <h3><i class="fas fa-box"></i> Detail Pesanan</h3>
+        ${itemsHtml}
+        <div class="order-total">
+          <span>Total Pesanan</span>
+          <span>⭐ ${totalPoints} poin</span>
+        </div>
+      </div>
+      
+      <div class="checkout-card">
+        <h3><i class="fas fa-user"></i> Informasi Penerima</h3>
+        <div>
+          <p><strong>Nama:</strong> ${escapeHtml(currentUser.name)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(currentUser.email)}</p>
+          <p><strong>Jenjang:</strong> ${escapeHtml(currentUser.jenjang || 'SD')}</p>
+          <p><strong>Sekolah:</strong> ${escapeHtml(currentUser.school || 'Belum diisi')}</p>
+        </div>
+      </div>
+      
+      <div class="checkout-card">
+        <h3><i class="fas fa-coins"></i> Ringkasan Poin</h3>
+        <div class="points-deduction">
+          <span>Poin Sebelumnya</span>
+          <span>⭐ ${userPoints}</span>
+        </div>
+        <div class="points-deduction" style="background: #FEF3C7;">
+          <span><i class="fas fa-minus-circle"></i> Poin Digunakan</span>
+          <span style="color: #D97706;">⭐ ${totalPoints}</span>
+        </div>
+        <div class="points-deduction" style="background: #ECFDF5; margin-bottom: 0;">
+          <span><i class="fas fa-check-circle"></i> Sisa Poin</span>
+          <span style="color: #10B981; font-weight: 700;">⭐ ${remainingPoints}</span>
+        </div>
+      </div>
+      
+      <div class="checkout-card">
+        <button class="btn-confirm" id="confirmCheckoutBtn">
+          <i class="fas fa-check-circle"></i> Konfirmasi Checkout
+        </button>
+        <a href="keranjang.html" class="btn-cancel">
+          <i class="fas fa-arrow-left"></i> Batal
+        </a>
+      </div>
+    `;
+    
+    document.getElementById('confirmCheckoutBtn')?.addEventListener('click', () => {
+      let total = cart.reduce((sum, item) => sum + item.price, 0);
+      
+      // Simpan riwayat transaksi
+      let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+      let newTransaction = {
+        id: 'LN-' + String(transactions.length + 1).padStart(4, '0'),
+        userId: currentUser.email,
+        userName: currentUser.name,
+        products: cart.map(item => ({ name: item.name, price: item.price, image: item.image })),
+        totalPoints: total,
+        status: 'Selesai',
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+      };
+      transactions.push(newTransaction);
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+      
+      // Kurangi poin user
+      let newPoints = userPoints - total;
+      let users = JSON.parse(localStorage.getItem('users'));
+      const userIndex = users.findIndex(u => u.email === currentUser.email);
+      if (userIndex !== -1) {
+        users[userIndex].points = newPoints;
+        localStorage.setItem('users', JSON.stringify(users));
+        currentUser.points = newPoints;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      }
+      
+      // Kosongkan keranjang
+      localStorage.setItem('cart', JSON.stringify([]));
+      
+      showNotification(`✅ Checkout berhasil! Poin terpotong ${total}. Terima kasih sudah berbelanja!`, true);
+      
+      setTimeout(() => {
+        window.location.href = 'konfirmasi-pembayaran.html?id=' + newTransaction.id;
+      }, 1500);
+    });
+  }
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  renderCheckout();
+  
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li class="active"><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>

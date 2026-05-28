@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sertifikat | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0; }
+    .tab { padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 600; border-radius: 40px 40px 0 0; transition: 0.2s; color: var(--gray-600); text-decoration: none; display: inline-block; }
+    .tab.active { color: var(--primary); background: #EEF2FF; }
+    .tab:not(.active):hover { color: var(--primary); background: var(--gray-100); }
+    
+    /* Stats */
+    .stats-summary { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--border-radius-card); padding: 1.5rem 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; color: white; }
+    .stats-summary .total { font-size: 2rem; font-weight: 800; }
+    .stats-summary .label { font-size: 0.875rem; opacity: 0.9; }
+    .stats-summary .btn-download-all { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 40px; text-decoration: none; color: white; font-size: 0.875rem; transition: 0.2s; }
+    .stats-summary .btn-download-all:hover { background: rgba(255,255,255,0.3); }
+    
+    /* Certificate Grid */
+    .certificate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .certificate-card { background: white; border-radius: var(--border-radius-card); padding: 1.5rem; border: 1px solid var(--gray-200); transition: all 0.2s; display: flex; gap: 1rem; align-items: center; }
+    .certificate-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .cert-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #EEF2FF, #E0E7FF); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--primary); flex-shrink: 0; }
+    .cert-info { flex: 1; }
+    .cert-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+    .cert-desc { font-size: 0.7rem; color: var(--gray-600); margin-bottom: 0.5rem; }
+    .cert-date { font-size: 0.7rem; color: #10B981; display: flex; align-items: center; gap: 0.25rem; }
+    .cert-actions { display: flex; gap: 0.5rem; flex-direction: column; }
+    .btn-download { background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 0.25rem; transition: 0.2s; border: none; cursor: pointer; }
+    .btn-download:hover { transform: scale(1.05); background: var(--primary-dark); }
+    .btn-preview { background: var(--gray-100); color: var(--gray-600); padding: 0.4rem 1rem; border-radius: 40px; text-decoration: none; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 0.25rem; transition: 0.2s; }
+    .btn-preview:hover { background: var(--gray-200); }
+    
+    /* Empty State */
+    .empty-state { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); }
+    .empty-state i { font-size: 3rem; color: var(--gray-600); margin-bottom: 1rem; display: block; }
+    .empty-state h3 { margin-bottom: 0.5rem; }
+    .empty-state p { color: var(--gray-600); margin-bottom: 1rem; }
+    
+    @media (max-width:768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .certificate-card { flex-direction: column; text-align: center; }
+      .cert-actions { flex-direction: row; justify-content: center; }
+      .stats-summary { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>📜 Sertifikat</h1>
+      <p>Kumpulan sertifikat yang telah kamu raih</p>
+    </div>
+    
+    <div class="tabs">
+      <a href="pencapaian-badge.html" class="tab">🏅 Badge</a>
+      <a href="pencapaian-sertifikat.html" class="tab active">📜 Sertifikat</a>
+      <a href="pencapaian-poin.html" class="tab">⭐ Poin</a>
+    </div>
+    
+    <div id="certificateList"></div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'siswa') window.location = 'login.html';
+  
+  // Data sertifikat berdasarkan pencapaian user
+  let certificates = [];
+  
+  // Ambil data modul yang sudah diselesaikan
+  let completedModules = JSON.parse(localStorage.getItem('completedModules')) || [];
+  
+  // Ambil data kuis yang sudah diselesaikan
+  let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+  let userQuizHistory = quizHistory.filter(h => h.userEmail === currentUser.email);
+  
+  // Hitung total modul selesai
+  let totalModules = completedModules.length;
+  
+  // Hitung total kuis selesai
+  let totalQuizzes = userQuizHistory.length;
+  
+  // Hitung total poin
+  let totalPoints = currentUser.points || 0;
+  
+  // Buat sertifikat berdasarkan pencapaian
+  if (totalModules >= 1) {
+    certificates.push({
+      id: 1,
+      title: "Dasar Calistung",
+      desc: "Telah menyelesaikan 1 modul pertama",
+      icon: "📘",
+      date: completedModules[0]?.completedAt || "15 Januari 2024"
+    });
+  }
+  
+  if (totalModules >= 5) {
+    certificates.push({
+      id: 2,
+      title: "Mahir Calistung",
+      desc: "Telah menyelesaikan 5 modul",
+      icon: "📚",
+      date: "5 Februari 2024"
+    });
+  }
+  
+  if (totalModules >= 10) {
+    certificates.push({
+      id: 3,
+      title: "Calistung Expert",
+      desc: "Telah menyelesaikan 10 modul",
+      icon: "🏅",
+      date: "20 Maret 2024"
+    });
+  }
+  
+  if (totalQuizzes >= 3) {
+    certificates.push({
+      id: 4,
+      title: "Pecinta Kuis",
+      desc: "Mengerjakan 3 kuis",
+      icon: "🎯",
+      date: "10 Februari 2024"
+    });
+  }
+  
+  if (totalQuizzes >= 5) {
+    certificates.push({
+      id: 5,
+      title: "Master Kuis",
+      desc: "Mengerjakan 5 kuis",
+      icon: "🏆",
+      date: "25 Maret 2024"
+    });
+  }
+  
+  if (totalPoints >= 500) {
+    certificates.push({
+      id: 6,
+      title: "Pengumpul Poin",
+      desc: "Mengumpulkan 500 poin",
+      icon: "💰",
+      date: "15 April 2024"
+    });
+  }
+  
+  if (totalPoints >= 1000) {
+    certificates.push({
+      id: 7,
+      title: "Raja Poin",
+      desc: "Mengumpulkan 1000 poin",
+      icon: "👑",
+      date: "10 Mei 2024"
+    });
+  }
+  
+  // Jika tidak ada sertifikat, buat dummy untuk demo
+  if (certificates.length === 0) {
+    certificates = [
+      { id: 1, title: "Dasar Calistung", desc: "Telah menyelesaikan modul pertama", icon: "📘", date: "15 Januari 2024" }
+    ];
+  }
+  
+  function formatDate(dateStr) {
+    if (!dateStr) return "Belum tersedia";
+    return dateStr;
+  }
+  
+  // Render sertifikat
+  let html = `
+    <div class="stats-summary">
+      <div>
+        <div class="total">${certificates.length}</div>
+        <div class="label">Sertifikat Diperoleh</div>
+      </div>
+      <div>
+        <div class="total">${totalModules}</div>
+        <div class="label">Modul Selesai</div>
+      </div>
+      <div>
+        <div class="total">${totalQuizzes}</div>
+        <div class="label">Kuis Selesai</div>
+      </div>
+      <a href="#" class="btn-download-all" id="downloadAllBtn"><i class="fas fa-download"></i> Download Semua</a>
+    </div>
+    <div class="certificate-grid">
+  `;
+  
+  certificates.forEach(cert => {
+    html += `
+      <div class="certificate-card">
+        <div class="cert-icon">
+          <i class="fas fa-certificate"></i>
+        </div>
+        <div class="cert-info">
+          <div class="cert-title">📜 ${cert.title}</div>
+          <div class="cert-desc">${cert.desc}</div>
+          <div class="cert-date"><i class="far fa-calendar-alt"></i> ${formatDate(cert.date)}</div>
+        </div>
+        <div class="cert-actions">
+          <a href="#" class="btn-download" data-cert="${cert.title}"><i class="fas fa-download"></i> Download</a>
+          <a href="#" class="btn-preview" data-cert="${cert.title}"><i class="fas fa-eye"></i> Preview</a>
+        </div>
+      </div>
+    `;
+  });
+  
+  html += `</div>`;
+  
+  if (certificates.length === 0) {
+    html = `
+      <div class="empty-state">
+        <i class="fas fa-certificate"></i>
+        <h3>Belum Ada Sertifikat</h3>
+        <p>Selesaikan modul dan kuis untuk mendapatkan sertifikat</p>
+        <a href="modul.html" class="btn-download" style="display: inline-flex;">Mulai Belajar</a>
+      </div>
+    `;
+  }
+  
+  document.getElementById('certificateList').innerHTML = html;
+  
+  // Event listener untuk tombol download
+  document.querySelectorAll('.btn-download').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const certTitle = btn.dataset.cert;
+      alert(`📜 Download sertifikat: ${certTitle}\n\nFitur download akan tersedia segera.`);
+    });
+  });
+  
+  document.querySelectorAll('.btn-preview').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const certTitle = btn.dataset.cert;
+      alert(`👁️ Preview sertifikat: ${certTitle}\n\nFitur preview akan tersedia segera.`);
+    });
+  });
+  
+  document.getElementById('downloadAllBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    alert(`📦 Download semua sertifikat (${certificates.length} sertifikat)\n\nFitur ini akan tersedia segera.`);
+  });
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header"><div class="logo-icon"><i class="fas fa-feather-alt"></i></div><div class="logo-text">LenteraNusa</div></div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-user.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="modul.html"><i class="fas fa-book-open"></i> Modul Belajar</a></li>
+      <li><a href="paket-kuis.html"><i class="fas fa-question-circle"></i> Kuis</a></li>
+      <li class="active"><a href="pencapaian-badge.html"><i class="fas fa-medal"></i> Pencapaian</a></li>
+      <li><a href="leaderboard.html"><i class="fas fa-chart-line"></i> Leaderboard</a></li>
+      <li><a href="toko-hadiah.html"><i class="fas fa-gift"></i> Toko Hadiah</a></li>
+      <li><a href="artikel.html"><i class="fas fa-newspaper"></i> Artikel</a></li>
+      <li><a href="forum.html"><i class="fas fa-comments"></i> Forum</a></li>
+      <li><a href="profil-siswa.html"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="pengaturan-siswa.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('currentUser'); window.location='login.html'; });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) sidebar.classList.remove('open'); });
+</script>
+</body>
+</html>
