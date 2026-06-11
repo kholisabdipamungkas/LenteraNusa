@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kelola Produk | LenteraNusa Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--card-bg); border-radius: var(--border-radius-card); padding: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); transition: all 0.2s; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .stat-icon { width: 48px; height: 48px; background: #EEF2FF; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .stat-icon i { font-size: 1.5rem; color: var(--primary); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--gray-800); }
+    .stat-label { font-size: 0.875rem; color: var(--gray-600); }
+    
+    /* Filter Bar */
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+    .search-wrapper { flex: 1; position: relative; max-width: 300px; }
+    .search-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-600); }
+    .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--gray-200); border-radius: 40px; background: white; font-size: 0.875rem; transition: 0.2s; }
+    .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,33,182,0.1); }
+    .filter-select { padding: 0.75rem 1.5rem; border-radius: 40px; border: 1px solid var(--gray-200); background: white; font-size: 0.875rem; cursor: pointer; }
+    .btn-add { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 0.75rem 1.5rem; border-radius: 40px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; transition: all 0.2s; }
+    .btn-add:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(91,33,182,0.3); }
+    
+    /* Table Styles */
+    .table-container { background: white; border-radius: var(--border-radius-card); border: 1px solid var(--gray-200); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--gray-200); }
+    th { background: var(--gray-100); font-weight: 600; color: var(--gray-600); font-size: 0.875rem; }
+    td { color: var(--gray-800); font-size: 0.875rem; }
+    tr:hover td { background: var(--gray-100); }
+    .btn-edit, .btn-delete { padding: 0.5rem 0.75rem; border-radius: 8px; text-decoration: none; margin: 0 0.25rem; display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 500; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-edit { background: #EEF2FF; color: var(--primary); }
+    .btn-edit:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+    .btn-delete { background: #FEF2F2; color: #EF4444; }
+    .btn-delete:hover { background: #EF4444; color: white; transform: translateY(-2px); }
+    .badge-stok { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
+    .stok-tersedia { background: #D1FAE5; color: #065F46; }
+    .stok-sedikit { background: #FEF3C7; color: #92400E; }
+    .stok-habis { background: #FEE2E2; color: #991B1B; }
+    .product-icon { font-size: 1.2rem; margin-right: 0.5rem; }
+    
+    /* Empty State */
+    .empty-state { text-align: center; padding: 3rem; color: var(--gray-600); }
+    .empty-state i { font-size: 3rem; color: var(--gray-600); margin-bottom: 1rem; display: block; }
+    
+    /* Pagination */
+    .pagination { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem; }
+    .page-btn { padding: 0.5rem 0.75rem; border-radius: 8px; background: var(--gray-100); color: var(--gray-600); text-decoration: none; font-size: 0.875rem; transition: 0.2s; cursor: pointer; }
+    .page-btn:hover { background: var(--primary); color: white; }
+    .page-btn.active { background: var(--primary); color: white; }
+    
+    /* Quick Actions */
+    .quick-actions { margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-action { background: var(--gray-100); padding: 0.5rem 1rem; border-radius: 40px; text-decoration: none; color: var(--gray-600); font-size: 0.8rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-action:hover { background: var(--primary); color: white; }
+    
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); width:260px; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; }
+      .hamburger { display:block; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .search-wrapper { max-width: none; }
+      .table-container { overflow-x: auto; }
+      table { font-size: 0.75rem; }
+      th, td { padding: 0.75rem; }
+      .btn-edit, .btn-delete { padding: 0.35rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>🎁 Kelola Produk</h1>
+      <p>Tambah, edit, atau hapus produk yang tersedia di toko hadiah</p>
+    </div>
+    
+    <!-- Statistik -->
+    <div class="stats-grid" id="statsGrid"></div>
+    
+    <!-- Filter & Tombol Tambah -->
+    <div class="filter-bar">
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchProduct" class="search-input" placeholder="Cari produk...">
+      </div>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <select id="categoryFilter" class="filter-select">
+          <option value="">📦 Semua Kategori</option>
+          <option value="Buku">📖 Buku</option>
+          <option value="Alat Tulis">✏️ Alat Tulis</option>
+          <option value="Permainan">🎮 Permainan</option>
+          <option value="Merchandise">👕 Merchandise</option>
+        </select>
+        <select id="stockFilter" class="filter-select">
+          <option value="">📊 Semua Stok</option>
+          <option value="tersedia">✅ Tersedia (Stok > 0)</option>
+          <option value="habis">❌ Stok Habis</option>
+          <option value="sedikit">⚠️ Stok Menipis (≤ 5)</option>
+        </select>
+        <a href="tambah-produk.html" class="btn-add"><i class="fas fa-plus"></i> Tambah Produk</a>
+      </div>
+    </div>
+    
+    <!-- Tabel Produk -->
+    <div class="table-container">
+      <div style="overflow-x: auto;">
+        <table id="productTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Produk</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Stok</th>
+              <th>Terjual</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="productList"></tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <a href="dashboard-admin.html" class="btn-action"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="analitik.html" class="btn-action"><i class="fas fa-chart-pie"></i> Analitik</a>
+      <a href="kelola-artikel.html" class="btn-action"><i class="fas fa-newspaper"></i> Kelola Artikel</a>
+      <a href="kelola-transaksi.html" class="btn-action"><i class="fas fa-credit-card"></i> Kelola Transaksi</a>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Cek login admin
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'admin') window.location = 'login.html';
+  
+  // Ambil data produk
+  let products = JSON.parse(localStorage.getItem('products')) || [];
+  
+  // Jika produk kosong, buat data dummy
+  if (products.length === 0) {
+    products = [
+      { id: 1, name: "Buku Cerita Anak", category: "Buku", price: 500, stock: 15, sold: 45, image: "📖", description: "Kumpulan cerita rakyat Nusantara yang menarik untuk dibaca" },
+      { id: 2, name: "Set Pensil Warna 24", category: "Alat Tulis", price: 300, stock: 25, sold: 67, image: "✏️", description: "Pensil warna berkualitas tinggi dengan 24 warna" },
+      { id: 3, name: "Puzzle Edukatif", category: "Permainan", price: 400, stock: 10, sold: 23, image: "🧩", description: "Puzzle 100 pieces dengan peta Indonesia" },
+      { id: 4, name: "Kaos LenteraNusa", category: "Merchandise", price: 800, stock: 0, sold: 89, image: "👕", description: "Kaos eksklusif edisi terbatas" },
+      { id: 5, name: "Buku Latihan Soal", category: "Buku", price: 450, stock: 20, sold: 34, image: "📚", description: "Buku latihan soal lengkap dengan pembahasan" },
+      { id: 6, name: "Stiker Edukatif", category: "Alat Tulis", price: 100, stock: 3, sold: 127, image: "🌟", description: "Stiker lucu untuk reward belajar" }
+    ];
+    localStorage.setItem('products', JSON.stringify(products));
+  }
+  
+  // Variabel untuk pagination dan filter
+  let currentPage = 1;
+  const itemsPerPage = 5;
+  let currentSearch = '';
+  let currentCategory = '';
+  let currentStockFilter = '';
+  
+  // Hitung statistik
+  let totalProducts = products.length;
+  let totalCategories = [...new Set(products.map(p => p.category))].length;
+  let totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+  let totalSold = products.reduce((sum, p) => sum + (p.sold || 0), 0);
+  let lowStockCount = products.filter(p => p.stock > 0 && p.stock <= 5).length;
+  let outOfStockCount = products.filter(p => p.stock === 0).length;
+  
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-box"></i></div>
+      <div class="stat-value">${totalProducts}</div>
+      <div class="stat-label">Total Produk</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-tags"></i></div>
+      <div class="stat-value">${totalCategories}</div>
+      <div class="stat-label">Kategori</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-cubes"></i></div>
+      <div class="stat-value">${totalStock}</div>
+      <div class="stat-label">Total Stok</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="stat-value">${totalSold.toLocaleString()}</div>
+      <div class="stat-label">Total Terjual</div>
+    </div>
+  `;
+  
+  // Fungsi untuk mendapatkan class status stok
+  function getStockClass(stock) {
+    if (stock === 0) return 'stok-habis';
+    if (stock <= 5) return 'stok-sedikit';
+    return 'stok-tersedia';
+  }
+  
+  function getStockText(stock) {
+    if (stock === 0) return 'Habis';
+    if (stock <= 5) return `Menipis (${stock})`;
+    return `Tersedia (${stock})`;
+  }
+  
+  // Fungsi filter produk
+  function getFilteredProducts() {
+    return products.filter(product => {
+      const matchSearch = currentSearch === '' || 
+        product.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+        (product.description && product.description.toLowerCase().includes(currentSearch.toLowerCase()));
+      const matchCategory = currentCategory === '' || product.category === currentCategory;
+      let matchStock = true;
+      if (currentStockFilter === 'tersedia') matchStock = product.stock > 0;
+      else if (currentStockFilter === 'habis') matchStock = product.stock === 0;
+      else if (currentStockFilter === 'sedikit') matchStock = product.stock > 0 && product.stock <= 5;
+      return matchSearch && matchCategory && matchStock;
+    });
+  }
+  
+  // Fungsi render tabel dengan pagination
+  function renderProducts() {
+    const filtered = getFilteredProducts();
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const paginatedProducts = filtered.slice(start, start + itemsPerPage);
+    
+    let html = '';
+    if (paginatedProducts.length === 0) {
+      html = `<tr><td colspan="8" class="empty-state"><i class="fas fa-box-open"></i>Belum ada produk</td></tr>`;
+    } else {
+      paginatedProducts.forEach((product, idx) => {
+        const stockClass = getStockClass(product.stock);
+        html += `
+          <tr>
+            <td>${start + idx + 1}</td>
+            <td>
+              <span class="product-icon">${product.image || '🎁'}</span>
+              ${escapeHtml(product.name)}
+            </td>
+            <td>${escapeHtml(product.category)}</td>
+            <td><i class="fas fa-star" style="color: var(--primary);"></i> ${product.price}</td>
+            <td>${product.stock}</td>
+            <td>${product.sold || 0}</td>
+            <td><span class="badge-stok ${stockClass}">${getStockText(product.stock)}</span></td>
+            <td>
+              <a href="tambah-produk.html?id=${product.id}" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
+              <button class="btn-delete" data-id="${product.id}"><i class="fas fa-trash"></i> Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+    document.getElementById('productList').innerHTML = html;
+    
+    // Render pagination
+    renderPagination(totalPages);
+    
+    // Event listener untuk tombol hapus
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        let id = parseInt(btn.dataset.id);
+        if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+          products = products.filter(p => p.id !== id);
+          localStorage.setItem('products', JSON.stringify(products));
+          
+          // Reset ke halaman 1 jika perlu
+          if (getFilteredProducts().length === 0 && currentPage > 1) {
+            currentPage = 1;
+          }
+          renderProducts();
+          
+          // Update statistik setelah hapus
+          location.reload();
+        }
+      });
+    });
+  }
+  
+  function renderPagination(totalPages) {
+    const paginationDiv = document.getElementById('pagination');
+    if (totalPages <= 1) {
+      paginationDiv.innerHTML = '';
+      return;
+    }
+    
+    let html = '';
+    // Tombol Previous
+    if (currentPage > 1) {
+      html += `<a class="page-btn" data-page="${currentPage - 1}"><i class="fas fa-chevron-left"></i></a>`;
+    }
+    
+    // Nomor halaman
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === currentPage) {
+        html += `<span class="page-btn active">${i}</span>`;
+      } else if (Math.abs(i - currentPage) <= 2 || i === 1 || i === totalPages) {
+        html += `<a class="page-btn" data-page="${i}">${i}</a>`;
+      } else if (i === currentPage - 3 || i === currentPage + 3) {
+        html += `<span class="page-btn">...</span>`;
+      }
+    }
+    
+    // Tombol Next
+    if (currentPage < totalPages) {
+      html += `<a class="page-btn" data-page="${currentPage + 1}"><i class="fas fa-chevron-right"></i></a>`;
+    }
+    
+    paginationDiv.innerHTML = html;
+    
+    // Event listener untuk pagination
+    document.querySelectorAll('.page-btn[data-page]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentPage = parseInt(btn.dataset.page);
+        renderProducts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  }
+  
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  // Event listener untuk filter dan search
+  document.getElementById('searchProduct').addEventListener('input', (e) => {
+    currentSearch = e.target.value;
+    currentPage = 1;
+    renderProducts();
+  });
+  
+  document.getElementById('categoryFilter').addEventListener('change', (e) => {
+    currentCategory = e.target.value;
+    currentPage = 1;
+    renderProducts();
+  });
+  
+  document.getElementById('stockFilter').addEventListener('change', (e) => {
+    currentStockFilter = e.target.value;
+    currentPage = 1;
+    renderProducts();
+  });
+  
+  // Render awal
+  renderProducts();
+  
+  // Sidebar HTML lengkap
+  const sidebarHtml = `
+    <div class="sidebar-header">
+      <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+      <div class="logo-text">LenteraNusa</div>
+      <small style="margin-left:auto; font-size:10px; color:var(--primary);">Admin</small>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-admin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="analitik.html"><i class="fas fa-chart-pie"></i> Analitik</a></li>
+      <li><a href="kelola-artikel.html"><i class="fas fa-newspaper"></i> Kelola Artikel</a></li>
+      <li class="active"><a href="kelola-produk.html"><i class="fas fa-gift"></i> Kelola Produk</a></li>
+      <li><a href="kelola-pengguna.html"><i class="fas fa-users"></i> Kelola Pengguna</a></li>
+      <li><a href="kelola-transaksi.html"><i class="fas fa-credit-card"></i> Kelola Transaksi</a></li>
+      <li><a href="kelola-modul.html"><i class="fas fa-book"></i> Kelola Modul</a></li>
+      <li><a href="kelola-badge.html"><i class="fas fa-medal"></i> Kelola Badge</a></li>
+      <li><a href="kelola-forum.html"><i class="fas fa-comments"></i> Kelola Forum</a></li>
+      <li><a href="kelola-kuis.html"><i class="fas fa-question-circle"></i> Kelola Kuis</a></li>
+      <li><a href="profil-admin.html"><i class="fas fa-user-shield"></i> Profil</a></li>
+      <li><a href="pengaturan-admin.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  
+  // Logout
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { 
+    localStorage.removeItem('currentUser'); 
+    window.location = 'login.html'; 
+  });
+  
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  
+  // Tutup sidebar saat klik di luar (mobile)
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+</script>
+</body>
+</html>

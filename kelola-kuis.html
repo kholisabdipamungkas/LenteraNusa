@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kelola Kuis | LenteraNusa Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F8FAFC;
+      color: #0F172A;
+    }
+
+    :root {
+      --primary: #5B21B6;
+      --primary-dark: #4C1D95;
+      --secondary: #2563EB;
+      --gray-100: #F1F5F9;
+      --gray-200: #E2E8F0;
+      --gray-600: #475569;
+      --gray-800: #1E293B;
+      --card-bg: #FFFFFF;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card: 20px;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--gray-200);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+      transition: transform 0.2s ease;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .logo-icon {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      color: var(--gray-600);
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background: var(--gray-100);
+      color: var(--primary);
+    }
+
+    .sidebar-menu .active a {
+      background: #EEF2FF;
+      color: var(--primary);
+    }
+
+    .sidebar-menu i {
+      width: 1.25rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: var(--gray-600);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-card);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      background: #EEF2FF;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .stat-icon i {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-wrapper {
+      flex: 1;
+      position: relative;
+      max-width: 300px;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-600);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 40px;
+      background: white;
+      font-size: 0.875rem;
+      transition: 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.1);
+    }
+
+    .filter-select {
+      padding: 0.75rem 1.5rem;
+      border-radius: 40px;
+      border: 1px solid var(--gray-200);
+      background: white;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 40px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-add:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(91, 33, 182, 0.3);
+    }
+
+    /* Table Styles */
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius-card);
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    th {
+      background: var(--gray-100);
+      font-weight: 600;
+      color: var(--gray-600);
+      font-size: 0.875rem;
+    }
+
+    td {
+      color: var(--gray-800);
+      font-size: 0.875rem;
+    }
+
+    tr:hover td {
+      background: var(--gray-100);
+    }
+
+    .badge-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .status-published {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-draft {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .category-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .category-membaca {
+      background: #EFF6FF;
+      color: #2563EB;
+    }
+
+    .category-menulis {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+
+    .category-berhitung {
+      background: #ECFDF5;
+      color: #10B981;
+    }
+
+    .btn-edit,
+    .btn-delete {
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      margin: 0 0.25rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-edit {
+      background: #EEF2FF;
+      color: var(--primary);
+    }
+
+    .btn-edit:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-delete {
+      background: #FEF2F2;
+      color: #EF4444;
+    }
+
+    .btn-delete:hover {
+      background: #EF4444;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--gray-600);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--gray-600);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: var(--gray-100);
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      text-decoration: none;
+      color: var(--gray-600);
+      font-size: 0.8rem;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-action:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 60;
+      background: white;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 4rem;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-wrapper {
+        max-width: none;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        font-size: 0.75rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem;
+      }
+
+      .btn-edit,
+      .btn-delete {
+        padding: 0.35rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <div class="page-header">
+        <h1>📝 Kelola Kuis</h1>
+        <p>Tambah, edit, atau hapus kuis interaktif</p>
+      </div>
+
+      <!-- Statistik -->
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- Filter & Tombol Tambah -->
+      <div class="filter-bar">
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchQuiz" class="search-input" placeholder="Cari kuis...">
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <select id="kategoriFilter" class="filter-select">
+            <option value="">📖 Semua Kategori</option>
+            <option value="Membaca">📖 Membaca</option>
+            <option value="Menulis">✏️ Menulis</option>
+            <option value="Berhitung">🔢 Berhitung</option>
+          </select>
+          <select id="levelFilter" class="filter-select">
+            <option value="">🎓 Semua Level</option>
+            <option value="SD">SD</option>
+            <option value="SMP">SMP</option>
+            <option value="SMA">SMA</option>
+          </select>
+          <a href="tambah-kuis.html" class="btn-add"><i class="fas fa-plus"></i> Tambah Kuis</a>
+        </div>
+      </div>
+
+      <!-- Tabel Kuis -->
+      <div class="table-container">
+        <div style="overflow-x: auto;">
+          <table id="quizTable">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Judul Kuis</th>
+                <th>Kategori</th>
+                <th>Soal</th>
+                <th>Durasi</th>
+                <th>Poin</th>
+                <th>Level</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="quizList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a href="dashboard-admin.html" class="btn-action"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="analitik.html" class="btn-action"><i class="fas fa-chart-pie"></i> Analitik</a>
+        <a href="kelola-modul.html" class="btn-action"><i class="fas fa-book"></i> Kelola Modul</a>
+        <a href="kelola-produk.html" class="btn-action"><i class="fas fa-gift"></i> Kelola Produk</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      // Cek login admin
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser || currentUser.role !== 'admin') {
+        window.location = 'login.html';
+        return;
+      }
+
+      // Data kuis
+      let quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+      if (quizzes.length === 0) {
+        quizzes = [
+          { id: 1, title: "Kuis Membaca Pemahaman", category: "Membaca", totalSoal: 10, duration: "15", points: 100, level: "SD", status: "Published" },
+          { id: 2, title: "Kuis Tata Bahasa Indonesia", category: "Menulis", totalSoal: 15, duration: "20", points: 150, level: "SD", status: "Published" },
+          { id: 3, title: "Kuis Operasi Hitung Dasar", category: "Berhitung", totalSoal: 20, duration: "25", points: 200, level: "SD", status: "Published" },
+          { id: 4, title: "Kuis Pecahan dan Desimal", category: "Berhitung", totalSoal: 15, duration: "20", points: 150, level: "SMP", status: "Draft" },
+          { id: 5, title: "Kuis Membaca Kritis", category: "Membaca", totalSoal: 12, duration: "20", points: 120, level: "SMA", status: "Published" }
+        ];
+        localStorage.setItem('quizzes', JSON.stringify(quizzes));
+      }
+
+      // Hitung statistik
+      const totalQuizzes = quizzes.length;
+      const publishedQuizzes = quizzes.filter(q => q.status === 'Published').length;
+      const draftQuizzes = quizzes.filter(q => q.status === 'Draft').length;
+      const totalPoints = quizzes.reduce((sum, q) => sum + (q.points || 0), 0);
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-question-circle"></i></div>
+          <div class="stat-value">${totalQuizzes}</div>
+          <div class="stat-label">Total Kuis</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-value">${publishedQuizzes}</div>
+          <div class="stat-label">Published</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-pen-fancy"></i></div>
+          <div class="stat-value">${draftQuizzes}</div>
+          <div class="stat-label">Draft</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-star"></i></div>
+          <div class="stat-value">${totalPoints}</div>
+          <div class="stat-label">Total Poin</div>
+        </div>
+      `;
+
+      // Fungsi untuk mendapatkan class kategori
+      function getCategoryClass(category) {
+        if (category === "Membaca") return "category-membaca";
+        if (category === "Menulis") return "category-menulis";
+        if (category === "Berhitung") return "category-berhitung";
+        return "";
+      }
+
+      function getCategoryIcon(category) {
+        if (category === "Membaca") return "📖";
+        if (category === "Menulis") return "✏️";
+        if (category === "Berhitung") return "🔢";
+        return "📚";
+      }
+
+      // Fungsi render tabel
+      function renderQuizzes() {
+        const search = document.getElementById('searchQuiz').value.toLowerCase();
+        const kategori = document.getElementById('kategoriFilter').value;
+        const level = document.getElementById('levelFilter').value;
+
+        const filtered = quizzes.filter(q => {
+          const matchSearch = q.title.toLowerCase().includes(search);
+          const matchKategori = kategori === '' || q.category === kategori;
+          const matchLevel = level === '' || q.level === level;
+          return matchSearch && matchKategori && matchLevel;
+        });
+
+        let html = '';
+        if (filtered.length === 0) {
+          html = '<tr><td colspan="9" class="empty-state"><i class="fas fa-question-circle"></i>Belum ada kuis</td></tr>';
+        } else {
+          filtered.forEach((q, idx) => {
+            const statusClass = q.status === 'Published' ? 'status-published' : 'status-draft';
+            const categoryClass = getCategoryClass(q.category);
+            const categoryIcon = getCategoryIcon(q.category);
+            html += `
+              <tr>
+                <td>${idx + 1}</td>
+                <td><i class="fas fa-file-alt" style="color: var(--primary); margin-right: 0.5rem;"></i>${escapeHtml(q.title)}</td>
+                <td><span class="category-badge ${categoryClass}">${categoryIcon} ${escapeHtml(q.category)}</span></td>
+                <td>${q.totalSoal}</td>
+                <td><i class="far fa-clock"></i> ${q.duration} menit</td>
+                <td><i class="fas fa-star" style="color: var(--primary);"></i> ${q.points}</td>
+                <td><i class="fas fa-graduation-cap"></i> ${escapeHtml(q.level)}</td>
+                <td><span class="badge-status ${statusClass}">${q.status || 'Published'}</span></td>
+                <td>
+                  <a href="tambah-kuis.html?id=${q.id}" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
+                  <button class="btn-delete" data-id="${q.id}"><i class="fas fa-trash"></i> Hapus</button>
+                </td>
+              </tr>
+            `;
+          });
+        }
+        document.getElementById('quizList').innerHTML = html;
+
+        // Event listener untuk tombol hapus
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id);
+            if (confirm('Apakah Anda yakin ingin menghapus kuis ini?')) {
+              quizzes = quizzes.filter(q => q.id !== id);
+              localStorage.setItem('quizzes', JSON.stringify(quizzes));
+              renderQuizzes();
+
+              // Update statistik
+              const newTotal = quizzes.length;
+              const newPublished = quizzes.filter(q => q.status === 'Published').length;
+              const newDraft = quizzes.filter(q => q.status === 'Draft').length;
+              const newTotalPoints = quizzes.reduce((sum, q) => sum + (q.points || 0), 0);
+
+              document.querySelector('.stats-grid .stat-card:nth-child(1) .stat-value').innerText = newTotal;
+              document.querySelector('.stats-grid .stat-card:nth-child(2) .stat-value').innerText = newPublished;
+              document.querySelector('.stats-grid .stat-card:nth-child(3) .stat-value').innerText = newDraft;
+              document.querySelector('.stats-grid .stat-card:nth-child(4) .stat-value').innerText = newTotalPoints;
+            }
+          });
+        });
+      }
+
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Event listener untuk filter dan search
+      document.getElementById('searchQuiz').addEventListener('input', renderQuizzes);
+      document.getElementById('kategoriFilter').addEventListener('change', renderQuizzes);
+      document.getElementById('levelFilter').addEventListener('change', renderQuizzes);
+
+      // Render awal
+      renderQuizzes();
+
+      // Sidebar HTML lengkap
+      const sidebarHtml = `
+        <div class="sidebar-header">
+          <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+          <div class="logo-text">LenteraNusa</div>
+          <small style="margin-left:auto; font-size:10px; color:var(--primary);">Admin</small>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="dashboard-admin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="analitik.html"><i class="fas fa-chart-pie"></i> Analitik</a></li>
+          <li><a href="kelola-artikel.html"><i class="fas fa-newspaper"></i> Kelola Artikel</a></li>
+          <li><a href="kelola-produk.html"><i class="fas fa-gift"></i> Kelola Produk</a></li>
+          <li><a href="kelola-pengguna.html"><i class="fas fa-users"></i> Kelola Pengguna</a></li>
+          <li><a href="kelola-transaksi.html"><i class="fas fa-credit-card"></i> Kelola Transaksi</a></li>
+          <li><a href="kelola-modul.html"><i class="fas fa-book"></i> Kelola Modul</a></li>
+          <li><a href="kelola-badge.html"><i class="fas fa-medal"></i> Kelola Badge</a></li>
+          <li><a href="kelola-forum.html"><i class="fas fa-comments"></i> Kelola Forum</a></li>
+          <li class="active"><a href="kelola-kuis.html"><i class="fas fa-question-circle"></i> Kelola Kuis</a></li>
+          <li><a href="profil-admin.html"><i class="fas fa-user-shield"></i> Profil</a></li>
+          <li><a href="pengaturan-admin.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+          <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+        </ul>
+      `;
+
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) sidebar.innerHTML = sidebarHtml;
+
+      // Logout
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('currentUser');
+          window.location = 'login.html';
+        });
+      }
+
+      // Hamburger menu
+      const hamburger = document.getElementById('hamburger');
+      const sidebarElement = document.getElementById('sidebar');
+      if (hamburger && sidebarElement) {
+        hamburger.addEventListener('click', () => sidebarElement.classList.toggle('open'));
+      }
+
+      // Tutup sidebar saat klik di luar (mobile)
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          if (sidebarElement && hamburger && !sidebarElement.contains(e.target) && !hamburger.contains(e.target)) {
+            sidebarElement.classList.remove('open');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

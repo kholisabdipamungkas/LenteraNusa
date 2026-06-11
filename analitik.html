@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Analitik | LenteraNusa Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Stats Mini Grid */
+    .stats-mini {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .stat-mini-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-card);
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid var(--gray-200);
+      transition: all 0.2s;
+    }
+    .stat-mini-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .stat-mini-card h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+    .stat-mini-card p {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+    
+    /* Chart Containers */
+    .chart-container {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-card);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--gray-200);
+      transition: all 0.2s;
+    }
+    .chart-container:hover {
+      box-shadow: var(--shadow-sm);
+    }
+    .chart-container h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-800);
+    }
+    .chart-container h3 i {
+      color: var(--primary);
+    }
+    canvas { max-height: 320px; width: 100%; }
+    
+    /* Quick Actions */
+    .quick-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      background: var(--gray-100);
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      text-decoration: none;
+      color: var(--gray-600);
+      font-size: 0.8rem;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-action:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    @media (max-width: 1024px) {
+      .stats-mini {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 4rem;
+      }
+      .hamburger {
+        display: block;
+      }
+      .stats-mini {
+        grid-template-columns: 1fr;
+      }
+      .chart-container {
+        padding: 1rem;
+      }
+      canvas {
+        max-height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>📊 Analitik Platform</h1>
+      <p>Analisis performa pembelajaran siswa secara mendalam</p>
+    </div>
+    
+    <div class="stats-mini" id="statsMini"></div>
+    
+    <div class="chart-container">
+      <h3><i class="fas fa-chart-line"></i> Pertumbuhan Pengguna (6 Bulan Terakhir)</h3>
+      <canvas id="growthChart"></canvas>
+    </div>
+    
+    <div class="chart-container">
+      <h3><i class="fas fa-chart-bar"></i> Aktivitas Harian (Minggu Ini)</h3>
+      <canvas id="dailyChart"></canvas>
+    </div>
+    
+    <div class="chart-container">
+      <h3><i class="fas fa-chart-pie"></i> Distribusi Kategori Modul</h3>
+      <canvas id="categoryChart"></canvas>
+    </div>
+    
+    <div class="quick-actions">
+      <a href="kelola-pengguna.html" class="btn-action"><i class="fas fa-users"></i> Kelola Pengguna</a>
+      <a href="kelola-modul.html" class="btn-action"><i class="fas fa-book"></i> Kelola Modul</a>
+      <a href="kelola-produk.html" class="btn-action"><i class="fas fa-gift"></i> Kelola Produk</a>
+      <a href="kelola-transaksi.html" class="btn-action"><i class="fas fa-credit-card"></i> Kelola Transaksi</a>
+      <a href="kelola-artikel.html" class="btn-action"><i class="fas fa-newspaper"></i> Kelola Artikel</a>
+      <a href="dashboard-admin.html" class="btn-action"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Cek login admin
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'admin') window.location = 'login.html';
+  
+  // Ambil data dari localStorage
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  let modules = JSON.parse(localStorage.getItem('modules')) || [];
+  let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  let products = JSON.parse(localStorage.getItem('products')) || [];
+  let articles = JSON.parse(localStorage.getItem('articles')) || [];
+  
+  let students = users.filter(u => u.role === 'siswa');
+  let admins = users.filter(u => u.role === 'admin');
+  
+  // Statistik Kuis
+  let totalQuizzesTaken = quizHistory.length;
+  let totalQuizPoints = quizHistory.reduce((sum, q) => sum + (q.pointsEarned || 0), 0);
+  let avgQuizScore = totalQuizzesTaken > 0 ? Math.round(totalQuizPoints / totalQuizzesTaken) : 0;
+  
+  // Hitung rata-rata persentase skor kuis
+  let avgScorePercentage = 0;
+  if (quizHistory.length > 0) {
+    let totalPercentage = quizHistory.reduce((sum, q) => {
+      let percentage = (q.score / q.totalQuestions) * 100;
+      return sum + (isNaN(percentage) ? 0 : percentage);
+    }, 0);
+    avgScorePercentage = Math.round(totalPercentage / quizHistory.length);
+  }
+  
+  // Hitung total modul yang tersedia
+  let totalModules = modules.length;
+  
+  // Hitung total artikel
+  let totalArticles = articles.length;
+  let totalArticleViews = articles.reduce((sum, a) => sum + (a.views || 0), 0);
+  
+  // Tampilkan statistik mini
+  document.getElementById('statsMini').innerHTML = `
+    <div class="stat-mini-card">
+      <h3>${students.length}</h3>
+      <p><i class="fas fa-users"></i> Total Siswa</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${totalModules}</h3>
+      <p><i class="fas fa-book"></i> Total Modul</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${totalQuizzesTaken}</h3>
+      <p><i class="fas fa-puzzle-piece"></i> Kuis Dikerjakan</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${avgScorePercentage}%</h3>
+      <p><i class="fas fa-star"></i> Rata-rata Skor</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${transactions.length}</h3>
+      <p><i class="fas fa-shopping-cart"></i> Total Transaksi</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${totalArticleViews.toLocaleString()}</h3>
+      <p><i class="fas fa-eye"></i> Total Views Artikel</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${products.length}</h3>
+      <p><i class="fas fa-gift"></i> Total Produk</p>
+    </div>
+    <div class="stat-mini-card">
+      <h3>${admins.length}</h3>
+      <p><i class="fas fa-user-shield"></i> Total Admin</p>
+    </div>
+  `;
+  
+  // Grafik Pertumbuhan Pengguna (data simulasi berdasarkan data riil)
+  // Mengelompokkan user berdasarkan bulan bergabung (simulasi dengan data yang ada)
+  let currentYear = new Date().getFullYear();
+  let months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  
+  // Simulasi data pertumbuhan (jika ada data created_at, bisa lebih akurat)
+  // Di sini kita buat data berdasarkan jumlah siswa yang ada dengan distribusi realistis
+  let studentCount = students.length;
+  let growthData = [];
+  
+  if (studentCount > 0) {
+    // Distribusi logis: peningkatan setiap bulan
+    let baseValue = Math.max(5, Math.floor(studentCount / 8));
+    for (let i = 0; i < 6; i++) {
+      let multiplier = 1 + (i * 0.3);
+      let value = Math.floor(baseValue * multiplier);
+      growthData.push(Math.min(value, studentCount));
+    }
+  } else {
+    growthData = [12, 19, 25, 32, 40, 48];
+  }
+  
+  // Grafik Aktivitas Harian (simulasi berdasarkan data quiz history per hari)
+  let dailyActivity = [45, 62, 78, 55, 89, 42, 68];
+  if (quizHistory.length > 0) {
+    // Coba hitung berdasarkan data riil jika ada timestamp
+    let today = new Date();
+    let dayNames = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    let activityByDay = [0, 0, 0, 0, 0, 0, 0];
+    
+    quizHistory.forEach(q => {
+      if (q.date) {
+        let qDate = new Date(q.date);
+        let dayIndex = qDate.getDay();
+        // Konversi hari Minggu (0) menjadi index 6
+        let adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+        if (adjustedIndex >= 0 && adjustedIndex < 7) {
+          activityByDay[adjustedIndex]++;
+        }
+      }
+    });
+    
+    let hasData = activityByDay.some(v => v > 0);
+    if (hasData) {
+      dailyActivity = activityByDay;
+    }
+  }
+  
+  // Grafik Distribusi Kategori Modul
+  let categoryCount = {
+    'Membaca': 0,
+    'Menulis': 0,
+    'Berhitung': 0
+  };
+  
+  modules.forEach(m => {
+    if (m.category === 'Membaca') categoryCount['Membaca']++;
+    else if (m.category === 'Menulis') categoryCount['Menulis']++;
+    else if (m.category === 'Berhitung') categoryCount['Berhitung']++;
+    else {
+      // Kategori lain masuk ke 'Lainnya'
+      if (!categoryCount['Lainnya']) categoryCount['Lainnya'] = 0;
+      categoryCount['Lainnya']++;
+    }
+  });
+  
+  // Chart: Pertumbuhan Pengguna
+  new Chart(document.getElementById('growthChart'), { 
+    type: 'line', 
+    data: { 
+      labels: months.slice(0, 6), 
+      datasets: [{ 
+        label: 'Pengguna Baru', 
+        data: growthData, 
+        borderColor: '#5B21B6', 
+        backgroundColor: 'rgba(91, 33, 182, 0.05)',
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: '#5B21B6',
+        pointBorderColor: '#fff',
+        tension: 0.3,
+        fill: true
+      }] 
+    }, 
+    options: { 
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        tooltip: {
+          backgroundColor: '#1E293B',
+          titleColor: '#F1F5F9',
+          bodyColor: '#CBD5E1'
+        }
+      }
+    } 
+  });
+  
+  // Chart: Aktivitas Harian
+  new Chart(document.getElementById('dailyChart'), { 
+    type: 'bar', 
+    data: { 
+      labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], 
+      datasets: [{ 
+        label: 'Jumlah Aktivitas', 
+        data: dailyActivity, 
+        backgroundColor: 'rgba(91, 33, 182, 0.7)',
+        borderRadius: 8,
+        borderColor: '#5B21B6',
+        borderWidth: 1
+      }] 
+    }, 
+    options: { 
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        }
+      }
+    } 
+  });
+  
+  // Chart: Distribusi Kategori Modul
+  new Chart(document.getElementById('categoryChart'), { 
+    type: 'pie', 
+    data: { 
+      labels: Object.keys(categoryCount), 
+      datasets: [{ 
+        data: Object.values(categoryCount), 
+        backgroundColor: ['#5B21B6', '#2563EB', '#10B981', '#F59E0B'],
+        borderWidth: 0
+      }] 
+    }, 
+    options: { 
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.label || '';
+              let value = context.raw || 0;
+              let total = context.dataset.data.reduce((a, b) => a + b, 0);
+              let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+              return `${label}: ${value} modul (${percentage}%)`;
+            }
+          }
+        }
+      }
+    } 
+  });
+  
+  // Sidebar HTML (sama dengan dashboard admin)
+  const sidebarHtml = `
+    <div class="sidebar-header">
+      <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+      <div class="logo-text">LenteraNusa</div>
+      <small style="margin-left:auto; font-size:10px; color:var(--primary);">Admin</small>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-admin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li class="active"><a href="analitik.html"><i class="fas fa-chart-pie"></i> Analitik</a></li>
+      <li><a href="kelola-artikel.html"><i class="fas fa-newspaper"></i> Kelola Artikel</a></li>
+      <li><a href="kelola-produk.html"><i class="fas fa-gift"></i> Kelola Produk</a></li>
+      <li><a href="kelola-pengguna.html"><i class="fas fa-users"></i> Kelola Pengguna</a></li>
+      <li><a href="kelola-transaksi.html"><i class="fas fa-credit-card"></i> Kelola Transaksi</a></li>
+      <li><a href="kelola-modul.html"><i class="fas fa-book"></i> Kelola Modul</a></li>
+      <li><a href="kelola-badge.html"><i class="fas fa-medal"></i> Kelola Badge</a></li>
+      <li><a href="kelola-forum.html"><i class="fas fa-comments"></i> Kelola Forum</a></li>
+      <li><a href="kelola-kuis.html"><i class="fas fa-question-circle"></i> Kelola Kuis</a></li>
+      <li><a href="profil-admin.html"><i class="fas fa-user-shield"></i> Profil</a></li>
+      <li><a href="pengaturan-admin.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  
+  // Logout
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { 
+    localStorage.removeItem('currentUser'); 
+    window.location = 'login.html'; 
+  });
+  
+  // Hamburger menu untuk mobile
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  
+  // Tutup sidebar saat klik di luar (mobile)
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dashboard Admin | LenteraNusa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter', sans-serif; background:#F8FAFC; color:#0F172A; }
+    :root { 
+      --primary:#5B21B6; 
+      --primary-dark:#4C1D95; 
+      --secondary:#2563EB;
+      --gray-100:#F1F5F9;
+      --gray-200:#E2E8F0; 
+      --gray-600:#475569; 
+      --gray-800:#1E293B;
+      --card-bg:#FFFFFF; 
+      --shadow-sm:0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md:0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card:20px;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { 
+      width:280px; background:var(--card-bg); border-right:1px solid var(--gray-200);
+      position:fixed; top:0; bottom:0; left:0; z-index:50; transition:transform 0.2s ease;
+      overflow-y:auto; padding:1.5rem; 
+    }
+    .sidebar-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--gray-200); }
+    .logo-icon { background:linear-gradient(135deg,var(--primary),var(--secondary)); width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:white; }
+    .logo-text { font-family:'Poppins'; font-weight:700; font-size:1.25rem; background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .sidebar-menu { list-style:none; margin-top:1rem; }
+    .sidebar-menu li { margin-bottom:0.25rem; }
+    .sidebar-menu a { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:12px; color:var(--gray-600); font-weight:500; text-decoration:none; transition:all 0.2s; }
+    .sidebar-menu a:hover { background:var(--gray-100); color:var(--primary); }
+    .sidebar-menu .active a { background:#EEF2FF; color:var(--primary); }
+    .sidebar-menu i { width:1.25rem; }
+    .main-content { flex:1; margin-left:280px; padding:2rem; }
+    .hamburger { display:none; position:fixed; top:1rem; left:1rem; z-index:60; background:white; border:none; font-size:1.5rem; padding:0.5rem; border-radius:12px; cursor:pointer; box-shadow:var(--shadow-sm); }
+    
+    /* Page Header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .page-header p { color: var(--gray-600); }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--card-bg); border-radius: var(--border-radius-card); padding: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); transition: all 0.2s; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .stat-icon { width: 48px; height: 48px; background: #EEF2FF; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .stat-icon i { font-size: 1.5rem; color: var(--primary); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--gray-800); }
+    .stat-label { font-size: 0.875rem; color: var(--gray-600); }
+    
+    /* Row Layout */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .table-card { background: white; border-radius: var(--border-radius-card); padding: 1.5rem; border: 1px solid var(--gray-200); transition: 0.2s; }
+    .table-card:hover { box-shadow: var(--shadow-sm); }
+    .table-card h3 { margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; }
+    .table-card h3 i { color: var(--primary); }
+    
+    /* Table Styles */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--gray-200); }
+    th { font-weight: 600; color: var(--gray-600); background: var(--gray-100); }
+    tr:hover { background: var(--gray-100); }
+    .badge-status { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; display: inline-block; }
+    .status-selesai { background: #D1FAE5; color: #065F46; }
+    .status-diproses { background: #FEF3C7; color: #92400E; }
+    .status-pending { background: #FFE4E2; color: #B91C1C; }
+    .empty-state { text-align: center; padding: 2rem; color: var(--gray-600); }
+    
+    /* Quick Actions */
+    .quick-actions { margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-action { background: var(--gray-100); padding: 0.5rem 1rem; border-radius: 40px; text-decoration: none; color: var(--gray-600); font-size: 0.8rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-action:hover { background: var(--primary); color: white; }
+    
+    @media (max-width:1024px) { 
+      .stats-grid { grid-template-columns: repeat(2,1fr); } 
+      .row { grid-template-columns: 1fr; } 
+    }
+    @media (max-width:768px) { 
+      .sidebar { transform: translateX(-100%); width:260px; } 
+      .sidebar.open { transform: translateX(0); } 
+      .main-content { margin-left:0; padding:1.5rem; padding-top:4rem; } 
+      .hamburger { display:block; } 
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main-content">
+    <div class="page-header">
+      <h1>👨‍💼 Dashboard Admin</h1>
+      <p>Selamat datang kembali! Berikut ringkasan platform hari ini.</p>
+    </div>
+    
+    <div class="stats-grid" id="statsGrid"></div>
+    
+    <div class="row">
+      <div class="table-card">
+        <h3><i class="fas fa-user-plus"></i> Pengguna Terbaru</h3>
+        <div id="recentUsers"></div>
+      </div>
+      <div class="table-card">
+        <h3><i class="fas fa-shopping-cart"></i> Transaksi Terbaru</h3>
+        <div id="recentTransactions"></div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="table-card">
+        <h3><i class="fas fa-book-open"></i> Modul Populer</h3>
+        <div id="popularModules"></div>
+      </div>
+      <div class="table-card">
+        <h3><i class="fas fa-chart-line"></i> Statistik Belajar</h3>
+        <div id="learningStats"></div>
+      </div>
+    </div>
+    
+    <div class="quick-actions">
+      <a href="kelola-pengguna.html" class="btn-action"><i class="fas fa-users"></i> Kelola Pengguna</a>
+      <a href="kelola-modul.html" class="btn-action"><i class="fas fa-book"></i> Kelola Modul</a>
+      <a href="kelola-produk.html" class="btn-action"><i class="fas fa-gift"></i> Kelola Produk</a>
+      <a href="kelola-transaksi.html" class="btn-action"><i class="fas fa-credit-card"></i> Kelola Transaksi</a>
+      <a href="kelola-artikel.html" class="btn-action"><i class="fas fa-newspaper"></i> Kelola Artikel</a>
+      <a href="analitik.html" class="btn-action"><i class="fas fa-chart-pie"></i> Lihat Analitik</a>
+    </div>
+  </main>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser || currentUser.role !== 'admin') window.location = 'login.html';
+  
+  // Ambil data dari localStorage
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  let modules = JSON.parse(localStorage.getItem('modules')) || [];
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  let forums = JSON.parse(localStorage.getItem('forums')) || [];
+  let quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+  let products = JSON.parse(localStorage.getItem('products')) || [];
+  let articles = JSON.parse(localStorage.getItem('articles')) || [];
+  let quizHistory = JSON.parse(localStorage.getItem('quizHistory')) || [];
+  
+  let students = users.filter(u => u.role === 'siswa');
+  let admins = users.filter(u => u.role === 'admin');
+  
+  // Hitung total poin semua siswa
+  let totalPoints = students.reduce((sum, s) => sum + (s.points || 0), 0);
+  
+  // Hitung total kuis yang dikerjakan
+  let totalQuizzesTaken = quizHistory.length;
+  
+  // Hitung total views artikel
+  let totalArticleViews = articles.reduce((sum, a) => sum + (a.views || 0), 0);
+  
+  // Statistik Grid
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-value">${students.length}</div>
+      <div class="stat-label">Total Siswa</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-chalkboard-user"></i></div>
+      <div class="stat-value">${admins.length}</div>
+      <div class="stat-label">Total Admin</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-book"></i></div>
+      <div class="stat-value">${modules.length}</div>
+      <div class="stat-label">Total Modul</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+      <div class="stat-value">${transactions.length}</div>
+      <div class="stat-label">Total Transaksi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-gift"></i></div>
+      <div class="stat-value">${products.length}</div>
+      <div class="stat-label">Total Produk</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-question-circle"></i></div>
+      <div class="stat-value">${quizzes.length}</div>
+      <div class="stat-label">Total Kuis</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
+      <div class="stat-value">${articles.length}</div>
+      <div class="stat-label">Total Artikel</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-coins"></i></div>
+      <div class="stat-value">⭐ ${totalPoints.toLocaleString()}</div>
+      <div class="stat-label">Total Poin Siswa</div>
+    </div>
+  `;
+  
+  // Pengguna Terbaru (5 terakhir)
+  let recentUsersHtml = '';
+  if (students.length === 0) {
+    recentUsersHtml = '<div class="empty-state"><i class="fas fa-user-slash"></i> Belum ada pengguna</div>';
+  } else {
+    recentUsersHtml = '<table><thead><tr><th>Nama</th><th>Email</th><th>Jenjang</th><th>Poin</th></tr></thead><tbody>';
+    students.slice(-5).reverse().forEach(u => {
+      recentUsersHtml += `<tr><td><i class="fas fa-user"></i> ${u.name}</td><td>${u.email}</td><td>${u.jenjang || 'SD'}</td><td>⭐ ${u.points || 0}</td></tr>`;
+    });
+    recentUsersHtml += '</tbody></table>';
+  }
+  document.getElementById('recentUsers').innerHTML = recentUsersHtml;
+  
+  // Transaksi Terbaru (5 terakhir)
+  let recentTransHtml = '';
+  if (transactions.length === 0) {
+    recentTransHtml = '<div class="empty-state"><i class="fas fa-receipt"></i> Belum ada transaksi</div>';
+  } else {
+    recentTransHtml = '<table><thead><tr><th>ID</th><th>Pengguna</th><th>Total</th><th>Status</th></tr></thead><tbody>';
+    transactions.slice(-5).reverse().forEach(t => {
+      let statusClass = t.status === 'Selesai' ? 'status-selesai' : (t.status === 'Diproses' ? 'status-diproses' : 'status-pending');
+      recentTransHtml += `<tr><td>${t.id}</td><td>${t.userName}</td><td>⭐ ${t.totalPoints}</td><td><span class="badge-status ${statusClass}">${t.status || 'Selesai'}</span></td></tr>`;
+    });
+    recentTransHtml += '</tbody></table>';
+  }
+  document.getElementById('recentTransactions').innerHTML = recentTransHtml;
+  
+  // Modul Populer (berdasarkan views atau progress)
+  let popularModulesHtml = '';
+  if (modules.length === 0) {
+    popularModulesHtml = '<div class="empty-state"><i class="fas fa-book"></i> Belum ada modul</div>';
+  } else {
+    popularModulesHtml = '<table><thead><tr><th>Modul</th><th>Kategori</th><th>Level</th><th>Poin</th></tr></thead><tbody>';
+    modules.slice(0, 5).forEach(m => {
+      popularModulesHtml += `<tr><td><i class="fas fa-book-open"></i> ${m.title}</td><td>${m.category || 'Umum'}</td><td>${m.level || 'SD'}</td><td>⭐ ${m.points || 0}</td></tr>`;
+    });
+    popularModulesHtml += '</tbody></table>';
+  }
+  document.getElementById('popularModules').innerHTML = popularModulesHtml;
+  
+  // Statistik Belajar
+  let totalQuizzesCompleted = quizHistory.length;
+  let totalQuizzesPoints = quizHistory.reduce((sum, q) => sum + (q.pointsEarned || 0), 0);
+  let avgQuizScore = totalQuizzesCompleted > 0 ? Math.round(totalQuizzesPoints / totalQuizzesCompleted) : 0;
+  
+  document.getElementById('learningStats').innerHTML = `
+    <table>
+      <thead><tr><th>Metrik</th><th>Nilai</th></tr></thead>
+      <tbody>
+        <tr><td><i class="fas fa-puzzle-piece"></i> Total Kuis Dikerjakan</td><td><strong>${totalQuizzesCompleted}</strong></td></tr>
+        <tr><td><i class="fas fa-star"></i> Rata-rata Poin per Kuis</td><td><strong>⭐ ${avgQuizScore}</strong></td></tr>
+        <tr><td><i class="fas fa-comments"></i> Total Diskusi Forum</td><td><strong>${forums.length}</strong></td></tr>
+        <tr><td><i class="fas fa-eye"></i> Total Views Artikel</td><td><strong>${totalArticleViews.toLocaleString()}</strong></td></tr>
+      </tbody>
+    </table>
+  `;
+  
+  // Sidebar
+  const sidebarHtml = `
+    <div class="sidebar-header">
+      <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+      <div class="logo-text">LenteraNusa</div>
+      <small style="margin-left:auto; font-size:10px; color:var(--primary);">Admin</small>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="active"><a href="dashboard-admin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="analitik.html"><i class="fas fa-chart-pie"></i> Analitik</a></li>
+      <li><a href="kelola-artikel.html"><i class="fas fa-newspaper"></i> Kelola Artikel</a></li>
+      <li><a href="kelola-produk.html"><i class="fas fa-gift"></i> Kelola Produk</a></li>
+      <li><a href="kelola-pengguna.html"><i class="fas fa-users"></i> Kelola Pengguna</a></li>
+      <li><a href="kelola-transaksi.html"><i class="fas fa-credit-card"></i> Kelola Transaksi</a></li>
+      <li><a href="kelola-modul.html"><i class="fas fa-book"></i> Kelola Modul</a></li>
+      <li><a href="kelola-badge.html"><i class="fas fa-medal"></i> Kelola Badge</a></li>
+      <li><a href="kelola-forum.html"><i class="fas fa-comments"></i> Kelola Forum</a></li>
+      <li><a href="kelola-kuis.html"><i class="fas fa-question-circle"></i> Kelola Kuis</a></li>
+      <li><a href="profil-admin.html"><i class="fas fa-user-shield"></i> Profil</a></li>
+      <li><a href="pengaturan-admin.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+    </ul>
+  `;
+  document.querySelector('.sidebar').innerHTML = sidebarHtml;
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { 
+    localStorage.removeItem('currentUser'); 
+    window.location = 'login.html'; 
+  });
+  
+  const hamburger = document.getElementById('hamburger'), sidebar = document.getElementById('sidebar');
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => { 
+    if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) 
+      sidebar.classList.remove('open'); 
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tambah/Edit Kuis | LenteraNusa Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F8FAFC;
+      color: #0F172A;
+    }
+
+    :root {
+      --primary: #5B21B6;
+      --primary-dark: #4C1D95;
+      --secondary: #2563EB;
+      --gray-100: #F1F5F9;
+      --gray-200: #E2E8F0;
+      --gray-600: #475569;
+      --gray-800: #1E293B;
+      --card-bg: #FFFFFF;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --border-radius-card: 20px;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--gray-200);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+      transition: transform 0.2s ease;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .logo-icon {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      margin-top: 1rem;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      color: var(--gray-600);
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background: var(--gray-100);
+      color: var(--primary);
+    }
+
+    .sidebar-menu .active a {
+      background: #EEF2FF;
+      color: var(--primary);
+    }
+
+    .sidebar-menu i {
+      width: 1.25rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: var(--gray-600);
+    }
+
+    /* Back Link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-600);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      transition: 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border-radius: var(--border-radius-card);
+      padding: 2rem;
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-sm);
+      max-width: 650px;
+      margin: 0 auto;
+      transition: 0.2s;
+    }
+
+    .form-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Form Groups */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--gray-800);
+    }
+
+    .form-group label i {
+      margin-right: 0.5rem;
+      color: var(--primary);
+    }
+
+    .form-group label .required {
+      color: #EF4444;
+      margin-left: 0.25rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      background: #FEF9F0;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+    }
+
+    .form-hint {
+      font-size: 0.7rem;
+      color: var(--gray-600);
+      margin-top: 0.25rem;
+    }
+
+    /* Number Input Styling */
+    input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      opacity: 0.5;
+      appearance: auto;
+    }
+
+    /* Two Columns Layout */
+    .two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Category Preview */
+    .category-preview {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: var(--gray-100);
+      border-radius: 16px;
+      flex-wrap: wrap;
+    }
+
+    .preview-icon {
+      font-size: 2rem;
+      width: 60px;
+      height: 60px;
+      background: white;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Form Actions */
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-save:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(91, 33, 182, 0.3);
+    }
+
+    .btn-cancel {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: var(--gray-200);
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: white;
+      z-index: 1001;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 60;
+      background: white;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-top: 4rem;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .form-card {
+        padding: 1.5rem;
+        margin: 0 0.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn-save,
+      .btn-cancel {
+        justify-content: center;
+      }
+
+      .two-columns {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <a href="kelola-kuis.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Kelola Kuis</a>
+
+      <div class="page-header">
+        <h1 id="pageTitle">📝 Tambah Kuis Baru</h1>
+        <p id="pageDesc">Isi formulir di bawah untuk menambahkan kuis interaktif baru</p>
+      </div>
+
+      <div class="form-card">
+        <form id="quizForm">
+          <div class="form-group">
+            <label><i class="fas fa-heading"></i> Judul Kuis <span class="required">*</span></label>
+            <input type="text" id="title" placeholder="Contoh: Kuis Membaca Pemahaman" required>
+            <div class="form-hint">Judul kuis yang akan ditampilkan kepada siswa</div>
+          </div>
+
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fas fa-layer-group"></i> Kategori <span class="required">*</span></label>
+              <select id="category" required>
+                <option value="Membaca">📖 Membaca</option>
+                <option value="Menulis">✏️ Menulis</option>
+                <option value="Berhitung">🔢 Berhitung</option>
+              </select>
+              <div class="form-hint">Pilih kategori yang sesuai dengan materi kuis</div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-graduation-cap"></i> Level <span class="required">*</span></label>
+              <select id="level" required>
+                <option value="SD">SD (Sekolah Dasar)</option>
+                <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
+                <option value="SMA">SMA (Sekolah Menengah Atas)</option>
+              </select>
+              <div class="form-hint">Pilih level kesulitan kuis</div>
+            </div>
+          </div>
+
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fas fa-question-circle"></i> Jumlah Soal <span class="required">*</span></label>
+              <input type="number" id="totalSoal" placeholder="Contoh: 10" min="1" required>
+              <div class="form-hint">Jumlah pertanyaan dalam kuis</div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-clock"></i> Durasi <span class="required">*</span></label>
+              <input type="number" id="duration" placeholder="Contoh: 15" min="1" required>
+              <div class="form-hint">Durasi pengerjaan dalam menit</div>
+            </div>
+          </div>
+
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fas fa-star"></i> Poin Reward <span class="required">*</span></label>
+              <input type="number" id="points" placeholder="Contoh: 100" min="0" required>
+              <div class="form-hint">Poin yang didapat siswa setelah menyelesaikan kuis</div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-flag-checkered"></i> Status</label>
+              <select id="status">
+                <option value="Published">✅ Published (Terbit)</option>
+                <option value="Draft">📝 Draft (Draf)</option>
+              </select>
+              <div class="form-hint">Published akan tampil di halaman siswa, Draft hanya tersimpan</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-align-left"></i> Deskripsi Kuis</label>
+            <textarea id="description" rows="3" placeholder="Deskripsikan kuis ini secara detail..."></textarea>
+            <div class="form-hint">Deskripsi akan membantu siswa memahami materi yang akan diujikan</div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-save"><i class="fas fa-save"></i> Simpan Kuis</button>
+            <a href="kelola-kuis.html" class="btn-cancel"><i class="fas fa-times"></i> Batal</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      // Cek login admin
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser || currentUser.role !== 'admin') {
+        window.location = 'login.html';
+        return;
+      }
+
+      // Ambil parameter URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const editId = parseInt(urlParams.get('id'));
+      let quizzes = JSON.parse(localStorage.getItem('quizzes')) || [];
+      let editingQuiz = editId ? quizzes.find(q => q.id === editId) : null;
+
+      // Fungsi notifikasi
+      function showNotification(message, isSuccess = true) {
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+        notif.style.background = isSuccess ? '#10B981' : '#EF4444';
+        notif.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        document.body.appendChild(notif);
+        setTimeout(() => {
+          notif.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => {
+            if (notif && notif.remove) notif.remove();
+          }, 300);
+        }, 3000);
+      }
+
+      // Jika mode edit, isi form dengan data yang ada
+      if (editingQuiz) {
+        document.getElementById('pageTitle').innerHTML = '✏️ Edit Kuis';
+        document.getElementById('pageDesc').innerHTML = 'Perbarui informasi kuis di bawah ini';
+        document.getElementById('title').value = editingQuiz.title || '';
+        document.getElementById('category').value = editingQuiz.category || 'Membaca';
+        document.getElementById('totalSoal').value = editingQuiz.totalSoal || '';
+        document.getElementById('duration').value = editingQuiz.duration || '';
+        document.getElementById('points').value = editingQuiz.points || '';
+        document.getElementById('level').value = editingQuiz.level || 'SD';
+        document.getElementById('status').value = editingQuiz.status || 'Published';
+        document.getElementById('description').value = editingQuiz.description || '';
+      }
+
+      // Submit form
+      const quizForm = document.getElementById('quizForm');
+      if (quizForm) {
+        quizForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+
+          const title = document.getElementById('title').value.trim();
+          const category = document.getElementById('category').value;
+          const totalSoal = parseInt(document.getElementById('totalSoal').value);
+          const duration = document.getElementById('duration').value;
+          const points = parseInt(document.getElementById('points').value);
+          const level = document.getElementById('level').value;
+          const status = document.getElementById('status').value;
+          const description = document.getElementById('description').value.trim();
+
+          // Validasi
+          if (title === '') {
+            showNotification('Judul kuis tidak boleh kosong!', false);
+            return;
+          }
+          if (isNaN(totalSoal) || totalSoal < 1) {
+            showNotification('Jumlah soal harus berupa angka positif!', false);
+            return;
+          }
+          if (duration === '' || parseInt(duration) < 1) {
+            showNotification('Durasi harus berupa angka positif!', false);
+            return;
+          }
+          if (isNaN(points) || points < 0) {
+            showNotification('Poin reward harus berupa angka positif!', false);
+            return;
+          }
+
+          if (editingQuiz) {
+            // Update kuis yang sudah ada
+            editingQuiz.title = title;
+            editingQuiz.category = category;
+            editingQuiz.totalSoal = totalSoal;
+            editingQuiz.duration = duration;
+            editingQuiz.points = points;
+            editingQuiz.level = level;
+            editingQuiz.status = status;
+            editingQuiz.description = description;
+            localStorage.setItem('quizzes', JSON.stringify(quizzes));
+            showNotification('Kuis berhasil diperbarui!', true);
+          } else {
+            // Buat kuis baru
+            const newQuiz = {
+              id: Date.now(),
+              title: title,
+              category: category,
+              totalSoal: totalSoal,
+              duration: duration,
+              points: points,
+              level: level,
+              status: status,
+              description: description || 'Kuis interaktif dari LenteraNusa'
+            };
+            quizzes.push(newQuiz);
+            localStorage.setItem('quizzes', JSON.stringify(quizzes));
+            showNotification('Kuis berhasil ditambahkan!', true);
+          }
+
+          setTimeout(() => {
+            window.location.href = 'kelola-kuis.html';
+          }, 1500);
+        });
+      }
+
+      // Sidebar HTML lengkap
+      const sidebarHtml = `
+        <div class="sidebar-header">
+          <div class="logo-icon"><i class="fas fa-feather-alt"></i></div>
+          <div class="logo-text">LenteraNusa</div>
+          <small style="margin-left:auto; font-size:10px; color:var(--primary);">Admin</small>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="dashboard-admin.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="analitik.html"><i class="fas fa-chart-pie"></i> Analitik</a></li>
+          <li><a href="kelola-artikel.html"><i class="fas fa-newspaper"></i> Kelola Artikel</a></li>
+          <li><a href="kelola-produk.html"><i class="fas fa-gift"></i> Kelola Produk</a></li>
+          <li><a href="kelola-pengguna.html"><i class="fas fa-users"></i> Kelola Pengguna</a></li>
+          <li><a href="kelola-transaksi.html"><i class="fas fa-credit-card"></i> Kelola Transaksi</a></li>
+          <li><a href="kelola-modul.html"><i class="fas fa-book"></i> Kelola Modul</a></li>
+          <li><a href="kelola-badge.html"><i class="fas fa-medal"></i> Kelola Badge</a></li>
+          <li><a href="kelola-forum.html"><i class="fas fa-comments"></i> Kelola Forum</a></li>
+          <li><a href="kelola-kuis.html"><i class="fas fa-question-circle"></i> Kelola Kuis</a></li>
+          <li><a href="profil-admin.html"><i class="fas fa-user-shield"></i> Profil</a></li>
+          <li><a href="pengaturan-admin.html"><i class="fas fa-cog"></i> Pengaturan</a></li>
+          <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+        </ul>
+      `;
+
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar) sidebar.innerHTML = sidebarHtml;
+
+      // Logout
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('currentUser');
+          window.location = 'login.html';
+        });
+      }
+
+      // Hamburger menu
+      const hamburger = document.getElementById('hamburger');
+      const sidebarElement = document.getElementById('sidebar');
+      if (hamburger && sidebarElement) {
+        hamburger.addEventListener('click', () => sidebarElement.classList.toggle('open'));
+      }
+
+      // Tutup sidebar saat klik di luar (mobile)
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          if (sidebarElement && hamburger && !sidebarElement.contains(e.target) && !hamburger.contains(e.target)) {
+            sidebarElement.classList.remove('open');
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
